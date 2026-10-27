@@ -556,6 +556,26 @@ async function findingsFromReflow(browser, url, out) {
         : `At 320 pixels wide, this reaches ${c.right} pixels, so the page scrolls sideways as well as up and down.`;
       out.findings.push({ rule: 'faceup-reflow-horizontal-scroll', page: url, selector: c.selector, message, source: 'faceup' });
     }
+    const narrow = await page.evaluate(() => {
+      const { selector, shown } = window.__faceup;
+      const openers = [...document.querySelectorAll('[aria-expanded], [aria-controls], [popovertarget], summary, button, [role="button"]')]
+        .filter((el) => el.matches('[aria-expanded], [aria-controls], [popovertarget], summary') || /menu|nav/i.test(`${el.textContent} ${el.getAttribute('aria-label') ?? ''}`));
+      if (openers.some(shown)) return [];
+      return [...document.querySelectorAll('nav, [role="navigation"]')]
+        .filter((n) => !n.closest('[aria-hidden="true"], [inert], [data-faceup-ignore]'))
+        .map((n) => ({ selector: selector(n), hidden: [...n.querySelectorAll('a[href]')].flatMap((a, i) => (shown(a) ? [] : [i])) }))
+        .filter((n) => n.hidden.length);
+    });
+    if (!narrow.length) return;
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.waitForTimeout(300);
+    const lost = await page.evaluate((navs) => navs.map((n) => {
+      const links = [...(document.querySelector(n.selector)?.querySelectorAll('a[href]') ?? [])];
+      return { selector: n.selector, count: n.hidden.filter((i) => links[i] && window.__faceup.shown(links[i])).length };
+    }).filter((n) => n.count), narrow);
+    for (const n of lost) {
+      out.notAssessed.push({ rule: 'faceup-reflow-horizontal-scroll', page: url, selector: n.selector, reason: `At 1280 pixels wide this navigation shows ${n.count} link${n.count === 1 ? '' : 's'} that ${n.count === 1 ? 'is' : 'are'} hidden at 320 pixels wide, and the page has no menu button there. If people cannot reach the same places another way at 320 pixels, a feature is lost, which fails WCAG 1.4.10. Check it manually at 400% zoom.` });
+    }
   } finally {
     await context.close();
   }

@@ -62,7 +62,7 @@ It reads React components (`.js`, `.jsx`, `.ts`, `.tsx`) and the HTML and CSS fi
 - **`findings`:** each finding is evidence for its rule. A code finding gives a file, line and column. A browser finding gives the page address in `file` and `page`, line 0, and a CSS selector. `source` says whether axe or Face Up found it.
 - **`count` and `places`:** when the same kind of problem repeats on a page, it is one finding with a count and up to 10 places, each with its own selector and message. One shared component usually causes them all, so find it and fix it once.
 - **`review`:** a finding with `"review": true` may be wrong. Confirm it before reporting it as Found (see "Evidence and status").
-- **`notAssessed`:** places a check could not decide, each with a `reason`. Decide each from the code if you can and explain it in Notes. Otherwise list the rule under "Not decided". An entry with `rule: null` is a page area the browser pass could not enter, such as a sandboxed frame.
+- **`notAssessed`:** places a check could not decide, each with a `reason`. Decide each from the code if you can and explain it in Notes. Otherwise list the rule under "Not decided" and put its WCAG criteria under Needs a person. An entry with `rule: null` is a page area the browser pass could not enter, such as a sandboxed frame.
 - **`browser.pages`:** the pages the browser pass actually checked.
 - **`browser.pageErrors`:** pages it could not check, with the reason.
   - With `movedTo`, the server sent that address on to another one: run the browser pass on the `movedTo` address instead.

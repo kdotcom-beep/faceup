@@ -14,6 +14,7 @@ These changes come from running the skill on two real projects, a static marketi
 - **Pinned bars in the styles.** A code check finds a bar pinned to the top or bottom of the screen with no matching `scroll-padding`, so the problem is found without a browser.
 - **Markup in template strings.** The code checks now read markup built in template strings in plain JavaScript, such as markup set with `innerHTML`. Before, they saw only the HTML files.
 - **Text spacing, skip links and dark mode.** The browser pass applies the WCAG text spacing and reports text that is then cut off, reports skip links whose target is missing or hidden, and measures contrast again in dark mode.
+- **Hidden navigation.** At 320 pixels wide, the browser pass lists navigation links that show at desktop width but are hidden with no menu button, for a person to check under Reflow. Before, Reflow could pass while the main navigation was missing on a phone.
 - **Undecided axe results.** Places axe could not decide outside the catalogue, such as text over a picture, are now listed in `axeIncomplete` for a person to check. Before, they were dropped, so the report looked cleaner than the page was.
 
 ### Changed
