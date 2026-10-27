@@ -1,7 +1,7 @@
 ---
 id: faceup-consistent-help
 title: Help is in a different place on each page
-summary: "The help link sits in the header on one page, the footer on the next, and is missing on the third. Put help in one shared layout."
+summary: "Help links and contact details should sit in the same place on every page. People who found help once look for it there again, and people with cognitive disabilities rely on that consistency."
 failure_mode: flow-and-memory
 tier: 2
 severity: failure

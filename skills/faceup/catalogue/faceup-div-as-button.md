@@ -1,7 +1,7 @@
 ---
 id: faceup-div-as-button
 title: Clickable element that is not a button
-summary: "Something looks like a button but is a plain box with a click action, so keyboards and screen readers cannot use it. Use a real button."
+summary: "Anything that acts like a button should be a real button element. A clickable box cannot be reached with the keyboard, is not announced as a button, and cannot be pressed by voice command."
 failure_mode: naming-and-semantics
 tier: 1
 severity: failure

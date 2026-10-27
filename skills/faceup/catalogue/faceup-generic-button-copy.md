@@ -1,7 +1,7 @@
 ---
 id: faceup-generic-button-copy
 title: Button label does not name the action
-summary: "The button that charges the card says 'Continue', the same word as every earlier step. Name the action, such as 'Place order'."
+summary: "A button should name what it does, such as 'Place order', not just 'Continue' or 'Submit'. People need to know before pressing whether they are about to be charged or commit to something."
 failure_mode: cognition-and-clarity
 tier: 3
 severity: ux-failure

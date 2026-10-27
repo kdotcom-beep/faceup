@@ -1,7 +1,7 @@
 ---
 id: faceup-keyboard-trap
 title: Keyboard focus gets stuck in a component
-summary: "A date picker takes over the keyboard and no key gets you out. Let Tab leave it, and make Escape close it and return focus to the button that opened it."
+summary: "Keyboard focus must be able to leave every component it can enter. A trap cuts keyboard users off from the rest of the page, forcing a reload that loses whatever they typed."
 failure_mode: focus-and-keyboard
 tier: 1
 severity: failure

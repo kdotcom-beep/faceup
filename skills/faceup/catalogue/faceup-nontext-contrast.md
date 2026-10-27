@@ -1,7 +1,7 @@
 ---
 id: faceup-nontext-contrast
 title: Controls and icons have low contrast
-summary: "Field borders, focus outlines and switches are drawn in colours barely different from the background. Keep each at a contrast of 3:1 or more against what sits behind it."
+summary: "Field borders, focus outlines, icons and switches need a contrast of at least 3:1 against what is around them. Below that, people with low vision or a screen in bright light cannot see them."
 failure_mode: focus-and-keyboard
 tier: 1
 severity: failure
@@ -99,11 +99,11 @@ Show a switch's state with more than colour, such as a moving knob, a tick or a 
 **What checks it today.**
 - The Face Up scanner's browser pass measures the edges of text fields against the colour behind them, and a border, outline, fill, shadow or close-fitting wrapper that reaches 3:1 passes.
 - When an icon sits inside the field, a person checks by eye.
-- On 14 well-known sites tested in October 2026, 3 of 6 findings were real, and the wrong ones were select menus, the drop-down lists the scanner no longer checks.
+- On 14 well-known sites tested in October 2026, 3 of 6 findings were real, and the wrong ones were select menus. The scanner now lists a select menu for a person to check only when it shares the border of a field that failed.
 - Findings are for review and never block a release.
 
 **What it cannot catch.**
-- Select menus, icons, switches, checkbox states and focus outlines.
+- Select menus on their own, icons, switches, checkbox states and focus outlines.
 - Fields over a photo or gradient.
 - Whether a switch shows its state with more than colour.
 

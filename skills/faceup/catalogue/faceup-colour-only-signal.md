@@ -1,7 +1,7 @@
 ---
 id: faceup-colour-only-signal
 title: Colour alone marks an error or a link
-summary: "A field turns red to show an error, or paragraph links differ from text only by colour. Add a non-colour signal, such as a message, an icon or an underline."
+summary: "Colour must not be the only way to show an error, a link or a state. Colour-blind people may not see the difference, so they miss the error or cannot find the link."
 failure_mode: feedback-and-status
 tier: 2
 severity: failure

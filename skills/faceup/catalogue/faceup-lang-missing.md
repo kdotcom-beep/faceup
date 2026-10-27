@@ -1,7 +1,7 @@
 ---
 id: faceup-lang-missing
 title: Page language is not set
-summary: "The page never says what language it is in, so a screen reader may read it in the wrong voice. Add a valid language code, such as en-AU, at the top of the page."
+summary: "Every page must declare the language it is written in. Without it, screen readers guess, often wrongly, and read every word with the wrong pronunciation."
 failure_mode: naming-and-semantics
 tier: 1
 severity: failure

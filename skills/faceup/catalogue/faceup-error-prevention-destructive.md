@@ -1,7 +1,7 @@
 ---
 id: faceup-error-prevention-destructive
 title: Irreversible action has no confirm step or undo
-summary: "A button that deletes data, moves money or makes a legal commitment acts on the first click and cannot be reversed. Add a confirm step or an undo."
+summary: "Actions that delete data, take payment or make a legal commitment need a confirm step or an undo. Without one, a single slip from a tremor or a misread label cannot be reversed."
 failure_mode: state-and-edge-cases
 tier: 2
 severity: failure

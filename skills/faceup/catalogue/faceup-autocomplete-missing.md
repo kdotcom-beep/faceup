@@ -1,7 +1,7 @@
 ---
 id: faceup-autocomplete-missing
 title: Personal details fields have no autocomplete
-summary: "Personal details fields do not tell the browser what they hold, so it cannot fill them in reliably. Give each field the autocomplete value that names its purpose."
+summary: "Fields for personal details should tell the browser what they hold, such as name, email or card number. This lets browsers fill them in, sparing people with motor or memory difficulties from typing details again."
 failure_mode: input-and-forms
 tier: 2
 severity: failure

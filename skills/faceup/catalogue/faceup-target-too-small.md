@@ -1,7 +1,7 @@
 ---
 id: faceup-target-too-small
 title: Tap targets are too small
-summary: "An icon button is about 16 by 16 pixels and easy to miss. Keep the icon size and make the button at least 24 by 24 pixels, or 44 for touch."
+summary: "Buttons and links must be at least 24 by 24 pixels, or have enough space around them. Smaller targets make people with tremors, large fingers or a moving phone hit the wrong control."
 failure_mode: input-and-forms
 tier: 1
 severity: failure

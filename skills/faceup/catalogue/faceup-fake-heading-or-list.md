@@ -1,7 +1,7 @@
 ---
 id: faceup-fake-heading-or-list
 title: Heading or list is only styled text
-summary: "Text looks like a heading or list because of bold, large type or bullet characters, but the code has no heading or list element. Use real heading and list elements, then style them."
+summary: "Headings and lists must be real heading and list elements, not text styled to look like them. Screen reader users jump by headings and count list items, so styled text hides the structure."
 failure_mode: naming-and-semantics
 tier: 2
 severity: failure

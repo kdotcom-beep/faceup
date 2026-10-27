@@ -1,7 +1,7 @@
 ---
 id: faceup-missing-loading-state
 title: Nothing shows while data loads
-summary: "While data is on its way, the page shows nothing to say it is loading. Show a clear loading message, and make sure screen readers announce it too."
+summary: "While data loads, the page should show that it is loading, to sighted and screen reader users alike. Otherwise people cannot tell if anything is happening, so they tap again, reload or leave."
 failure_mode: state-and-edge-cases
 tier: 1
 severity: ux-failure

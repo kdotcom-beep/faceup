@@ -1,7 +1,7 @@
 ---
 id: faceup-heading-order
 title: Heading levels skip or run out of order
-summary: "Heading levels are picked for their size, so the page jumps from level 1 to level 3. Choose each heading's level by where it sits in the page, and set its size separately."
+summary: "Heading levels should step down one at a time to match the page's structure. Screen reader users treat headings as a map, so a skipped level suggests a missing section."
 failure_mode: naming-and-semantics
 tier: 1
 severity: ux-failure

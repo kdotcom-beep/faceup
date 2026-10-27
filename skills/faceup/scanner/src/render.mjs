@@ -11,9 +11,13 @@ const AXE_RULES = {
   'input-button-name': 'faceup-control-missing-name',
   'aria-command-name': 'faceup-control-missing-name',
   'heading-order': 'faceup-heading-order',
+  'label-content-name-mismatch': 'faceup-label-not-in-name',
+  'avoid-inline-spacing': 'faceup-text-spacing-clipped',
 };
 
 const AXE_MESSAGES = {
+  'avoid-inline-spacing': 'This element locks its text spacing with !important, so spacing settings chosen by the person reading cannot change it.',
+  'label-content-name-mismatch': 'This control shows words that its accessible name leaves out, so saying those words to voice control does not reach it.',
   'html-has-lang': 'The page does not say what language it is in, so a screen reader may read it in the wrong voice.',
   'html-lang-valid': 'The page names a language code that is not valid, so a screen reader cannot use it.',
   'document-title': 'The page has no title, so its browser tab and history entry are blank.',
@@ -34,6 +38,8 @@ export const BROWSER_CHECKS = [
   { name: 'autoplay-video', rules: ['faceup-autoplay-media-no-control'] },
   { name: 'field-edges', rules: ['faceup-nontext-contrast'] },
   { name: 'keyboard', rules: ['faceup-focus-not-visible', 'faceup-focus-obscured-sticky', 'faceup-keyboard-trap'] },
+  { name: 'skip-links', rules: ['faceup-skip-link-missing'] },
+  { name: 'text-spacing', rules: ['faceup-text-spacing-clipped'] },
   { name: 'reflow', rules: ['faceup-reflow-horizontal-scroll'] },
   { name: 'reduced-motion', rules: ['faceup-reduced-motion-ignored'] },
 ];
@@ -143,7 +149,29 @@ function installHelpers() {
     const stack = document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2);
     return stack.slice(stack.indexOf(el) + 1).some((n) => !n.contains(el) && (['IMG', 'PICTURE', 'VIDEO', 'CANVAS'].includes(n.tagName) || getComputedStyle(n).backgroundImage !== 'none'));
   };
-  window.__faceup = { parse, ratio, background, selector, shown, look, edge, pictureBehind, focused, ids: new WeakMap(), next: 1, rest: new Map(), current: null };
+  // Whether something pinned to the screen fully covers a control. A layer counts as covering when it
+  // is opaque, or when it blurs what is behind it, which makes the control unreadable.
+  const coverOf = (el) => {
+    const r = el.getBoundingClientRect();
+    if (r.width <= 2 || r.height <= 2) return { covered: false, frameCovered: false };
+    const points = [[r.left + r.width / 2, r.top + r.height / 2], [r.left + 2, r.top + 2], [r.right - 2, r.top + 2], [r.left + 2, r.bottom - 2], [r.right - 2, r.bottom - 2]];
+    const layer = (hit) => {
+      let solid = ['IMG', 'VIDEO', 'CANVAS'].includes(hit.tagName);
+      for (let p = hit; p && p.nodeType === 1; p = p.parentElement) {
+        const st = getComputedStyle(p);
+        if (Number(st.opacity) >= 0.9 && ((parse(st.backgroundColor)?.a ?? 0) >= 0.9 || (st.backdropFilter && st.backdropFilter !== 'none'))) solid = true;
+        if (st.position === 'fixed' || st.position === 'sticky') return hit.tagName === 'IFRAME' ? 'frame' : solid ? 'solid' : 'see-through';
+      }
+      return null;
+    };
+    const hits = points.map(([x, y]) => {
+      const hit = document.elementFromPoint(x, y);
+      return hit && !el.contains(hit) && !hit.contains(el) ? layer(hit) : null;
+    });
+    const covered = hits.every((h) => h === 'solid');
+    return { covered, frameCovered: !covered && hits.every((h) => h === 'solid' || h === 'frame') };
+  };
+  window.__faceup = { parse, ratio, background, selector, shown, look, edge, coverOf, pictureBehind, focused, ids: new WeakMap(), next: 1, rest: new Map(), current: null };
 }
 
 async function findingsFromAxe(page, url, out) {
@@ -169,7 +197,11 @@ async function findingsFromAxe(page, url, out) {
   }
   for (const v of result.incomplete) {
     const rule = AXE_RULES[v.id];
-    if (!rule) continue;
+    if (!rule) {
+      const wcag = v.tags.map((t) => t.match(/^wcag(\d)(\d)(\d+)$/)).filter(Boolean).map((m) => `${m[1]}.${m[2]}.${m[3]}`);
+      out.axeIncomplete.push({ page: url, axeRule: v.id, help: v.help, wcag, nodes: v.nodes.length, selectors: v.nodes.slice(0, 20).map((n) => n.target.join(' ')), helpUrl: v.helpUrl });
+      continue;
+    }
     for (const node of v.nodes) out.notAssessed.push({ rule, page: url, selector: node.target.join(' '), reason: `axe could not decide ${v.id} here and asks a person to check it.` });
   }
 }
@@ -225,6 +257,11 @@ async function findingsFromDom(page, url, out) {
       if (!v.paused && !v.controls && !short && (shown(v) || !v.muted) && !pauseButton(v)) results.push({ rule: 'faceup-autoplay-media-no-control', selector: selector(v), message: `This video plays by itself${v.muted ? ' (muted)' : ''} and has no player controls to pause it.` });
     }
 
+    const borderOf = (el) => {
+      const cs = getComputedStyle(el);
+      return [cs.borderTopStyle, cs.borderTopWidth, cs.borderTopColor, cs.backgroundColor].join(' ');
+    };
+    const failedBorders = new Set();
     for (const el of document.querySelectorAll(TEXT_FIELD)) {
       if (ignored(el) || !shown(el) || el.closest('[aria-hidden="true"], [inert]')) continue;
       const r = el.getBoundingClientRect();
@@ -259,6 +296,11 @@ async function findingsFromDom(page, url, out) {
       const icon = [...(hug?.querySelectorAll('svg, img') ?? [])].some((i) => shown(i) && !i.contains(el));
       const measured = best >= 1.05 ? `This field's edge has a contrast of ${best.toFixed(2)}:1 against the background, below the 3:1 needed to see where the field is.` : 'The check found no border, outline or fill that marks the edge of this field against the background around it.';
       results.push({ rule: 'faceup-nontext-contrast', selector: selector(el), message: icon ? `${measured} An icon inside the field may be enough to show where it is, so check it by eye.` : measured });
+      failedBorders.add(borderOf(el));
+    }
+    for (const el of document.querySelectorAll('select')) {
+      if (ignored(el) || !shown(el) || el.closest('[aria-hidden="true"], [inert]') || !failedBorders.has(borderOf(el))) continue;
+      results.push({ notAssessed: true, rule: 'faceup-nontext-contrast', selector: selector(el), reason: 'This select menu has the same border as a field that failed this check. Select menus are not measured, because the browser often draws part of their edge, so check it by eye.' });
     }
     return results;
   }, [...PLACEHOLDER_TITLES]);
@@ -295,6 +337,83 @@ async function pixelsChangeOnFocus(page, rect) {
   await page.evaluate(() => window.__faceup.current?.focus({ preventScroll: true }));
   if (!resting.equals(restingAgain)) return 'unknown';
   return withFocus.equals(resting) ? 'no' : 'yes';
+}
+
+// Moves through the page with Tab or Shift+Tab and reports controls fully covered by a pinned layer.
+// Moving backwards matters because browsers scroll a control into view near the bottom of the
+// window when tabbing forwards, so a header at the top rarely covers it until you go back.
+async function coverPass(page, url, out, deadline, { reverse, width }) {
+  const total = await page.evaluate(() => document.querySelectorAll('a[href], button, input, select, textarea, summary, [tabindex]').length);
+  if (!total) return 'done';
+  if (reverse) await page.evaluate(() => {
+    document.activeElement?.blur();
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  });
+  const seen = new Set();
+  const how = `${reverse ? 'moving backwards with Shift+Tab' : 'tabbing forwards'}${width ? ` in a window ${width} pixels wide` : ''}`;
+  for (let i = 0; i < total * 2 + 10; i++) {
+    if (Date.now() > deadline) return 'out of time';
+    await page.keyboard.press(reverse ? 'Shift+Tab' : 'Tab');
+    const step = await page.evaluate(() => {
+      const faceup = window.__faceup;
+      const el = faceup.focused();
+      if (!el || el === document.body || el === document.documentElement) return { key: 'body' };
+      if (el.tagName === 'IFRAME') return { key: 'frame' };
+      if (!faceup.ids.has(el)) faceup.ids.set(el, faceup.next++);
+      return { key: faceup.ids.get(el), selector: faceup.selector(el), ignored: Boolean(el.closest('[data-faceup-ignore]')), ...faceup.coverOf(el) };
+    });
+    if (step.key === 'body') {
+      if (seen.size) return 'done';
+      continue;
+    }
+    if (step.key === 'frame') continue;
+    if (seen.has(step.key)) return 'done';
+    seen.add(step.key);
+    if (step.ignored) continue;
+    const known = out.findings.some((f) => f.rule === 'faceup-focus-obscured-sticky' && f.page === url && f.selector === step.selector);
+    if (step.covered && !known) out.findings.push({ rule: 'faceup-focus-obscured-sticky', page: url, selector: step.selector, message: `When the keyboard reaches this control ${how}, something pinned to the screen covers it completely.`, source: 'faceup' });
+    if (step.frameCovered) out.notAssessed.push({ rule: 'faceup-focus-obscured-sticky', page: url, selector: step.selector, reason: 'An embedded frame pinned to the screen sits over this control, and the check cannot see whether the frame is see-through.' });
+  }
+  return 'done';
+}
+
+// Skip links whose target is missing, or hidden at the current window size, so following them goes nowhere.
+async function findingsFromSkipLinks(page, url, out, width) {
+  const broken = await page.evaluate(() => {
+    const { selector } = window.__faceup;
+    const results = [];
+    for (const link of document.querySelectorAll('a[href^="#"]')) {
+      const id = decodeURIComponent(link.getAttribute('href').slice(1));
+      if (!id || link.closest('[data-faceup-ignore]') || !/\bskip\b|jump to (the )?(main )?content/i.test(link.textContent)) continue;
+      if (!link.getClientRects().length) continue;
+      const target = document.getElementById(id) ?? document.getElementsByName(id)[0];
+      if (!target) results.push({ selector: selector(link), problem: 'missing', id });
+      else if (!target.getClientRects().length || getComputedStyle(target).visibility === 'hidden') results.push({ selector: selector(link), problem: 'hidden', id });
+    }
+    return results;
+  });
+  for (const b of broken) {
+    if (out.findings.some((f) => f.rule === 'faceup-skip-link-missing' && f.page === url && f.selector === b.selector)) continue;
+    const where = width ? `in a window ${width} pixels wide` : 'on this page';
+    out.findings.push({ rule: 'faceup-skip-link-missing', page: url, selector: b.selector, message: b.problem === 'missing' ? `This skip link points to #${b.id}, which is not on the page, so following it goes nowhere.` : `This skip link points to #${b.id}, which is hidden ${where}, so following it goes nowhere.`, source: 'faceup' });
+  }
+}
+
+const PHONE_WIDTH = 375;
+
+async function findingsFromPhoneKeyboard(browser, url, out, deadline) {
+  const context = await browser.newContext({ viewport: { width: PHONE_WIDTH, height: 700 } });
+  try {
+    const page = await context.newPage();
+    if (!(await openState(page, browser.target, out, `The keyboard check at ${PHONE_WIDTH} pixels wide`))) return 'done';
+    await page.waitForTimeout(300);
+    await page.evaluate(installHelpers);
+    await findingsFromSkipLinks(page, url, out, PHONE_WIDTH);
+    if ((await coverPass(page, url, out, deadline, { reverse: false, width: PHONE_WIDTH })) === 'out of time') return 'out of time';
+    return await coverPass(page, url, out, deadline, { reverse: true, width: PHONE_WIDTH });
+  } finally {
+    await context.close();
+  }
 }
 
 async function findingsFromKeyboard(page, url, out, deadline) {
@@ -347,24 +466,7 @@ async function findingsFromKeyboard(page, url, out, deadline) {
       const r = el.getBoundingClientRect();
       step.rect = { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
       step.typing = el.matches('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=image]), textarea, [contenteditable=""], [contenteditable="true"]');
-      if (r.width > 2 && r.height > 2) {
-        const points = [[r.left + r.width / 2, r.top + r.height / 2], [r.left + 2, r.top + 2], [r.right - 2, r.top + 2], [r.left + 2, r.bottom - 2], [r.right - 2, r.bottom - 2]];
-        const cover = (hit) => {
-          let solid = ['IMG', 'VIDEO', 'CANVAS'].includes(hit.tagName);
-          for (let p = hit; p && p.nodeType === 1; p = p.parentElement) {
-            const s = getComputedStyle(p);
-            if ((faceup.parse(s.backgroundColor)?.a ?? 0) >= 0.9 && Number(s.opacity) >= 0.9) solid = true;
-            if (s.position === 'fixed' || s.position === 'sticky') return hit.tagName === 'IFRAME' ? 'frame' : solid ? 'solid' : 'see-through';
-          }
-          return null;
-        };
-        const hits = points.map(([x, y]) => {
-          const hit = document.elementFromPoint(x, y);
-          return hit && !el.contains(hit) && !hit.contains(el) ? cover(hit) : null;
-        });
-        step.covered = hits.every((h) => h === 'solid');
-        step.frameCovered = !step.covered && hits.every((h) => h === 'solid' || h === 'frame');
-      }
+      Object.assign(step, faceup.coverOf(el));
       return step;
     });
     sequence.push(step.key);
@@ -404,7 +506,7 @@ async function findingsFromReflow(browser, url, out) {
   const context = await browser.newContext({ viewport: { width: 320, height: 640 } });
   try {
     const page = await context.newPage();
-    await open(page, url);
+    if (!(await openState(page, browser.target, out, 'Reflow at 320 pixels wide'))) return;
     await page.waitForTimeout(300);
     await page.evaluate(installHelpers);
     const culprits = await page.evaluate(() => {
@@ -459,6 +561,70 @@ async function findingsFromReflow(browser, url, out) {
   }
 }
 
+const TEXT_SPACING = '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }';
+
+// Applies the WCAG 1.4.12 spacing and reports text boxes that cut off text only once it is applied.
+async function findingsFromTextSpacing(browser, url, out) {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, bypassCSP: true });
+  try {
+    const page = await context.newPage();
+    if (!(await openState(page, browser.target, out, 'Text spacing'))) return;
+    await page.waitForTimeout(300);
+    await page.evaluate(installHelpers);
+    const clipped = () => page.evaluate(() => {
+      const { selector, shown } = window.__faceup;
+      const found = new Map();
+      for (const el of document.querySelectorAll('body *')) {
+        if (el.closest('[data-faceup-ignore], [aria-hidden="true"]') || !shown(el)) continue;
+        if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+        const cs = getComputedStyle(el);
+        const hidesY = ['hidden', 'clip'].includes(cs.overflowY) && el.scrollHeight > el.clientHeight + 2;
+        const hidesX = ['hidden', 'clip'].includes(cs.overflowX) && el.scrollWidth > el.clientWidth + 2;
+        if (hidesY || hidesX) found.set(selector(el), el.textContent.trim().slice(0, 60));
+      }
+      return [...found];
+    });
+    const before = new Set((await clipped()).map(([s]) => s));
+    await page.addStyleTag({ content: TEXT_SPACING });
+    await page.waitForTimeout(200);
+    for (const [selector, text] of await clipped()) {
+      if (before.has(selector)) continue;
+      out.findings.push({ rule: 'faceup-text-spacing-clipped', page: url, selector, message: `With the WCAG text spacing applied, the text in this box no longer fits and is cut off: "${text}".`, source: 'faceup' });
+    }
+  } finally {
+    await context.close();
+  }
+}
+
+// When the page has dark styles, measures text contrast again with dark mode on.
+async function findingsFromDarkMode(browser, url, out) {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, colorScheme: 'dark' });
+  try {
+    const page = await context.newPage();
+    if (!(await openState(page, browser.target, out, 'Contrast in dark mode'))) return;
+    await page.waitForTimeout(300);
+    const dark = await page.evaluate(() => {
+      if (getComputedStyle(document.documentElement).colorScheme.includes('dark')) return true;
+      const inSheet = (rules) => [...rules].some((r) => (r.media && /prefers-color-scheme:\s*dark/i.test(r.media.mediaText)) || (r.cssRules && inSheet(r.cssRules)));
+      return [...document.styleSheets].some((sheet) => {
+        try {
+          return (sheet.media && /prefers-color-scheme:\s*dark/i.test(sheet.media.mediaText)) || inSheet(sheet.cssRules);
+        } catch {
+          return false;
+        }
+      });
+    });
+    if (!dark) return;
+    const { default: AxeBuilder } = await import('@axe-core/playwright');
+    const result = await new AxeBuilder({ page }).withRules(['color-contrast']).exclude('[data-faceup-ignore]').analyze();
+    const entry = (v) => ({ page: url, axeRule: v.id, colorScheme: 'dark', help: `${v.help} (in dark mode)`, wcag: ['1.4.3'], nodes: v.nodes.length, selectors: v.nodes.slice(0, 20).map((n) => n.target.join(' ')), helpUrl: v.helpUrl });
+    for (const v of result.violations) out.axeOther.push({ ...entry(v), impact: v.impact });
+    for (const v of result.incomplete) out.axeIncomplete.push(entry(v));
+  } finally {
+    await context.close();
+  }
+}
+
 async function findingsFromMotion(browser, url, out) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
   try {
@@ -475,7 +641,7 @@ async function findingsFromMotion(browser, url, out) {
       document.addEventListener('transitionrun', record, true);
     });
     const page = await context.newPage();
-    await open(page, url);
+    if (!(await openState(page, browser.target, out, 'Motion with the reduce-motion setting on'))) return;
     await page.waitForTimeout(800);
     await page.evaluate(installHelpers);
     const moving = await page.evaluate(() => {
@@ -547,6 +713,39 @@ async function open(page, url) {
   return response;
 }
 
+export const STEP_KINDS = ['click', 'fill', 'select', 'press', 'waitFor', 'wait'];
+
+// Runs a state's steps, such as clicks that open a view or a dialog, so the checks see that state.
+async function runSteps(page, { name, steps = [] }) {
+  for (const [i, step] of steps.entries()) {
+    const kind = STEP_KINDS.find((k) => k in step);
+    try {
+      if (kind === 'click') await page.click(step.click, { timeout: 10000 });
+      else if (kind === 'fill') await page.fill(step.fill, String(step.value ?? ''), { timeout: 10000 });
+      else if (kind === 'select') await page.selectOption(step.select, String(step.value ?? ''), { timeout: 10000 });
+      else if (kind === 'press') await page.keyboard.press(step.press);
+      else if (kind === 'waitFor') await page.waitForSelector(step.waitFor, { timeout: 10000 });
+      else if (kind === 'wait') await page.waitForTimeout(Math.min(Number(step.wait) || 0, 10000));
+    } catch (error) {
+      throw new Error(`step ${i + 1} of "${name}" (${kind} ${JSON.stringify(step[kind])}) did not work: ${error.message.split('\n')[0]}`);
+    }
+  }
+  if (steps.length) await page.waitForTimeout(300);
+}
+
+// Opens a page in a fresh window and replays its state. When the steps fail at this window size,
+// the check is noted as not assessed instead of failing the whole page.
+async function openState(page, target, out, what) {
+  await open(page, target.url);
+  try {
+    await runSteps(page, target);
+    return true;
+  } catch (error) {
+    out.notAssessed.push({ rule: null, page: target.label, reason: `${what} was not checked, because ${error.message}` });
+    return false;
+  }
+}
+
 async function launch() {
   let playwright;
   try {
@@ -571,18 +770,21 @@ const sameAddress = (a, b) => {
   return norm(a) === norm(b);
 };
 
-async function checkPage(browser, url, out, titles, pageLimit) {
-  const deadline = Date.now() + pageLimit / 2;
-  const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+async function checkPage(browser, url, out, titles, pageLimit, width) {
+  const start = Date.now();
+  const deadline = start + pageLimit * 0.45;
+  const coverDeadline = start + pageLimit * 0.7;
+  const context = await browser.newContext({ viewport: { width, height: 800 } });
   try {
     const page = await context.newPage();
-    const response = await open(page, url).catch((error) => ({ error }));
+    const { target } = browser;
+    const response = await open(page, target.url).catch((error) => ({ error }));
     if (!response || response.error || !response.ok()) {
       out.pageErrors.push({ page: url, message: response?.error ? response.error.message.split('\n')[0] : `The page answered with status ${response?.status() ?? 'none'}.` });
       return;
     }
     await page.waitForTimeout(300);
-    if (!sameAddress(page.url(), url)) {
+    if (!sameAddress(page.url(), target.url)) {
       const hop = await response.request().redirectedFrom()?.response();
       const server = hop && sameAddress(page.url(), response.url());
       const kind = [301, 308].includes(hop?.status()) ? 'permanently' : 'for now';
@@ -604,18 +806,25 @@ async function checkPage(browser, url, out, titles, pageLimit) {
       out.pageErrors.push({ page: url, message: 'The site showed a page that blocks automated browsers instead of its real content, so it was not checked.' });
       return;
     }
+    await runSteps(page, target);
     await page.evaluate(installHelpers);
     out.pages.push(url);
     await findingsFromAxe(page, url, out);
     const title = await findingsFromDom(page, url, out);
-    if (title) titles.set(url, title);
+    await findingsFromSkipLinks(page, url, out, null);
+    if (title && !target.steps) titles.set(url, title);
     await findingsFromKeyboard(page, url, out, deadline);
+    const backwards = await coverPass(page, url, out, coverDeadline, { reverse: true, width: width === 1280 ? null : width });
+    const phone = backwards === 'done' && width > PHONE_WIDTH ? await findingsFromPhoneKeyboard(browser, url, out, coverDeadline) : backwards;
+    if (phone === 'out of time') out.notAssessed.push({ rule: 'faceup-focus-obscured-sticky', page: url, reason: 'The time for keyboard checks ran out before every control was checked moving backwards and at phone width.' });
   } finally {
     await context.close();
   }
   if (!out.pages.includes(url)) return;
   await findingsFromReflow(browser, url, out);
   await findingsFromMotion(browser, url, out);
+  await findingsFromTextSpacing(browser, url, out);
+  await findingsFromDarkMode(browser, url, out);
 }
 
 const PLACES_LISTED = 10;
@@ -623,7 +832,7 @@ const PLACES_LISTED = 10;
 function groupRepeats(findings) {
   const groups = new Map();
   for (const f of findings) {
-    const key = [f.rule, f.page, f.source, f.message.replace(/\d+(\.\d+)?/g, '#')].join('|');
+    const key = [f.rule, f.page, f.source, f.message.replace(/"[^"]*"/g, '""').replace(/\d+(\.\d+)?/g, '#')].join('|');
     groups.set(key, [...(groups.get(key) ?? []), f]);
   }
   return [...groups.values()].map((group) => {
@@ -637,18 +846,22 @@ function groupRepeats(findings) {
   });
 }
 
-export async function renderScan(urls, { pageLimit = 120000 } = {}) {
+// states: [{ name, url, steps }] screens reached by clicks after loading, each checked as its own page.
+// storageState: a Playwright storage state file, such as saved data or a sign-in, loaded into every window.
+export async function renderScan(urls, { pageLimit = 120000, width = 1280, states = [], storageState } = {}) {
   const { browser, name } = await launch();
-  const out = { browser: name, axeVersion: null, pages: [], findings: [], notAssessed: [], axeOther: [], pageErrors: [] };
+  const out = { browser: name, axeVersion: null, pages: [], findings: [], notAssessed: [], axeOther: [], axeIncomplete: [], pageErrors: [] };
   const titles = new Map();
   const stopped = new Set();
+  const targets = [...urls.map((url) => ({ url, label: url })), ...states.map((s) => ({ ...s, label: `${s.url} (${s.name})` }))];
   try {
-    for (const url of urls) {
+    for (const target of targets) {
+      const url = target.label;
       const contexts = [];
-      const tracked = { newContext: async (options) => { const c = await browser.newContext(options); contexts.push(c); return c; } };
+      const tracked = { target, newContext: async (options) => { const c = await browser.newContext({ ...options, ...(storageState ? { storageState } : {}) }); contexts.push(c); return c; } };
       let timer;
       const limit = new Promise((resolve) => { timer = setTimeout(() => resolve('timeout'), pageLimit); });
-      const run = checkPage(tracked, url, out, titles, pageLimit).then(() => 'done', (error) => error);
+      const run = checkPage(tracked, url, out, titles, pageLimit, width).then(() => 'done', (error) => error);
       const outcome = await Promise.race([run, limit]);
       clearTimeout(timer);
       if (outcome === 'done') continue;
@@ -659,7 +872,7 @@ export async function renderScan(urls, { pageLimit = 120000 } = {}) {
   } finally {
     await browser.close();
   }
-  for (const key of ['findings', 'notAssessed', 'axeOther']) out[key] = out[key].filter((f) => !stopped.has(f.page));
+  for (const key of ['findings', 'notAssessed', 'axeOther', 'axeIncomplete']) out[key] = out[key].filter((f) => !stopped.has(f.page));
   out.pages = out.pages.filter((p) => !stopped.has(p));
   for (const url of stopped) titles.delete(url);
   const byTitle = new Map();

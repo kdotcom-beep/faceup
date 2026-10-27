@@ -1,7 +1,7 @@
 ---
 id: faceup-cognitive-auth-test
 title: Login depends on memory or a puzzle
-summary: "Login asks the person to remember a code and blocks pasting, so password managers cannot fill it in. Let the field accept pasting and autofill, or offer another way to log in."
+summary: "Logging in must not depend on remembering, transcribing or solving something without help such as pasting or a password manager. Memory tests lock out people with memory difficulties, dyslexia or difficulty with numbers."
 failure_mode: cognition-and-clarity
 tier: 2
 severity: failure

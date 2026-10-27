@@ -1,7 +1,7 @@
 ---
 id: faceup-back-discards-data
 title: Going back clears what the person entered
-summary: "Going back a step in a form wipes what the person typed, so they have to enter it again. Keep every step's answers in one place that lasts for the whole process."
+summary: "Going back a step in a form should keep everything the person has already entered. Losing it forces them to retype finished work, which costs switch and voice control users every character twice."
 failure_mode: flow-and-memory
 tier: 2
 severity: failure

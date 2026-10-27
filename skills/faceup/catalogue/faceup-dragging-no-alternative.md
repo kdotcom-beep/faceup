@@ -1,7 +1,7 @@
 ---
 id: faceup-dragging-no-alternative
 title: Reordering only works by dragging
-summary: "A list can only be reordered by dragging, which some people cannot do. Keep dragging and add up and down buttons that work with a single click or tap."
+summary: "Anything that can be done by dragging must also work with single clicks or taps. People with tremors, or who point with their head or eyes, cannot hold a steady drag."
 failure_mode: input-and-forms
 tier: 2
 severity: failure

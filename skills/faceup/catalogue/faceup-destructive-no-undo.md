@@ -1,7 +1,7 @@
 ---
 id: faceup-destructive-no-undo
 title: Delete cannot be undone
-summary: "Pressing delete removes the item at once, with no undo, bin or archive. Give people a way back, such as an undo button."
+summary: "Deleting something should come with a way to get it back, such as undo or a bin. Without one, a single slip loses the item, which falls hardest on people with motor or cognitive disabilities."
 failure_mode: state-and-edge-cases
 tier: 3
 severity: ux-failure

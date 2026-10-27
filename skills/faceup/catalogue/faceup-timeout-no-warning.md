@@ -1,7 +1,7 @@
 ---
 id: faceup-timeout-no-warning
 title: Session times out with no warning
-summary: "The session signs the person out after a set time, discarding their answers without warning. Warn them first and let them extend it with one action."
+summary: "A session that times out must warn people first and let them extend it with one action. Screen reader users, slow readers and anyone fetching a document can otherwise lose everything they entered."
 failure_mode: flow-and-memory
 tier: 2
 severity: failure

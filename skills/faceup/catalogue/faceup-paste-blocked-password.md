@@ -1,7 +1,7 @@
 ---
 id: faceup-paste-blocked-password
 title: Password field blocks paste
-summary: "The login form stops people pasting into the password and email fields, which breaks password managers. Remove the code that blocks pasting."
+summary: "Password fields must allow pasting, so password managers can fill them. Blocking paste forces people with motor impairments to type long passwords by hand and people with memory difficulties to remember them."
 failure_mode: input-and-forms
 tier: 2
 severity: failure

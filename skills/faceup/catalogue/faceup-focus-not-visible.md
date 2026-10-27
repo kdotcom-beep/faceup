@@ -1,7 +1,7 @@
 ---
 id: faceup-focus-not-visible
 title: Keyboard focus outline is missing
-summary: "The site's styles remove the outline that shows keyboard users where they are and put nothing in its place. Restore a clear outline that appears whenever someone uses the keyboard."
+summary: "Whatever has keyboard focus must show a visible outline. Without it, keyboard and switch users cannot tell where they are or what pressing Enter will do."
 failure_mode: focus-and-keyboard
 tier: 1
 severity: failure

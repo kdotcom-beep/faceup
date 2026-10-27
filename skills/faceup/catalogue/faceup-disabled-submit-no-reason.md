@@ -1,7 +1,7 @@
 ---
 id: faceup-disabled-submit-no-reason
 title: Disabled submit button gives no reason
-summary: "The submit button stays greyed out until every field is correct, and nothing says what is missing. Keep the button working and list what to fix when someone presses it."
+summary: "A submit button should not be disabled without saying what still needs doing. People are left hunting for the problem, keyboard users cannot reach the button, and some give up."
 failure_mode: input-and-forms
 tier: 2
 severity: ux-failure

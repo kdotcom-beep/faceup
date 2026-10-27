@@ -1,7 +1,7 @@
 ---
 id: faceup-page-title-generic
 title: Page title is the same on every view
-summary: "Every view in the app keeps the template's placeholder title, so browser tabs and history all look the same. Give every view its own title that describes it."
+summary: "Every page or view needs its own title describing what it is. Screen reader users hear the title first, and people with many tabs open use it to tell pages apart."
 failure_mode: flow-and-memory
 tier: 1
 severity: failure

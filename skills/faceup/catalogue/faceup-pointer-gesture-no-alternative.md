@@ -1,7 +1,7 @@
 ---
 id: faceup-pointer-gesture-no-alternative
 title: Gesture with no single-tap alternative
-summary: "A carousel only moves when you swipe, with no buttons to tap. Keep the swipe and add next and previous buttons that do the same job with one tap."
+summary: "Anything done with a swipe, pinch or other gesture must also work with a single tap or click. Switch users and people with limited hand control cannot perform gestures reliably."
 failure_mode: input-and-forms
 tier: 2
 severity: failure

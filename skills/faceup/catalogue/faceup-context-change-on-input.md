@@ -1,7 +1,7 @@
 ---
 id: faceup-context-change-on-input
 title: Changing a field opens a new page
-summary: "Picking an option from a list sends the person to a new page with no warning. Let them choose first, then act with a separate Go button."
+summary: "Changing a field's value must not load a new page or make another major change without warning. Keyboard users browsing a list with the arrow keys can be sent away before they have chosen."
 failure_mode: input-and-forms
 tier: 2
 severity: failure

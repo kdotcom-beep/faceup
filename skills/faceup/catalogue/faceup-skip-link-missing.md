@@ -1,9 +1,9 @@
 ---
 id: faceup-skip-link-missing
 title: No way to skip past the menu
-summary: "Every page starts with a long menu that keyboard users cannot jump past. Add a skip link that jumps to the main content, and wrap that content in a main element."
+summary: "Pages must let keyboard users skip past repeated menus straight to the main content. Without a skip link or landmarks, they must step through every menu link on every page."
 failure_mode: focus-and-keyboard
-tier: 2
+tier: 1
 severity: failure
 anchor:
   wcag:
@@ -20,8 +20,8 @@ detectable_by:
   wig: false
 detection:
   automatic: false
-  scanner: []
-  rendered: false
+  scanner: [browser]
+  rendered: true
   agent: true
   human_review: false
   manual_test: "Load a page, press Tab once, and confirm that a skip link appears and that pressing Enter on it moves you past the menu."
@@ -82,11 +82,13 @@ The skip link can stay hidden until a keyboard user reaches it, but it must then
 
 **What checks it today.**
 - The Face Up skill reads the shared layout for a skip link, main element and headings, and checks the skip link's target exists.
-- The scanner does not check this rule. axe, a widely used testing tool, has a `bypass` rule, but it leaves these pages for a person to review, and the scanner does not report those results.
+- Given a page address, the Face Up scanner reports a skip link whose target is missing, or hidden at 1280 or 375 pixels wide, so following it goes nowhere.
+- axe, a widely used testing tool, has a `bypass` rule, but it leaves these pages for a person to review, and the scanner does not report those results.
 - No finding blocks a release.
 
 **What it cannot catch.**
-- Whether the skip link appears and moves focus, which neither the skill nor axe tests.
+- Whether a page has a skip link at all, which the skill decides from the code.
+- Whether the skip link appears when focused and moves focus past the menu.
 - A page that passes with landmarks alone can still be slow for sighted keyboard users.
 
 ## Related rules

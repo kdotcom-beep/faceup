@@ -1,7 +1,7 @@
 ---
 id: faceup-lang-of-parts-missing
 title: Passage in another language is not marked
-summary: "A quote, title or passage in another language has no language code, so a screen reader reads it with the page's pronunciation. Add a language code (the lang attribute) to the element that holds it."
+summary: "Passages in a different language from the rest of the page must be marked with their language. Otherwise screen readers mispronounce them, and translation tools treat them as the page's language."
 failure_mode: naming-and-semantics
 tier: 2
 severity: failure

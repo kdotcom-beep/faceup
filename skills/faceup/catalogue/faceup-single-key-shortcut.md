@@ -1,7 +1,7 @@
 ---
 id: faceup-single-key-shortcut
 title: Single-key shortcut fires while typing
-summary: "Pressing a single key, such as '/' or 'j', triggers a shortcut anywhere on the page. Require Ctrl, Alt or Cmd, let people turn shortcuts off, or limit each to its own focused component."
+summary: "Shortcuts that use a single key, such as 'j' or '/', must be possible to turn off or change. Speech input users and people with tremors set them off by accident."
 failure_mode: focus-and-keyboard
 tier: 2
 severity: failure

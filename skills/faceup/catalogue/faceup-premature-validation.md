@@ -1,7 +1,7 @@
 ---
 id: faceup-premature-validation
 title: Field shows an error before typing is finished
-summary: "An email field turns red at the first letter, long before the person has finished typing. Wait until they leave the field before checking it."
+summary: "A field should not be checked until the person has finished with it. Errors shown while typing tell people they are wrong when they are not, and screen readers may announce them at every keystroke."
 failure_mode: input-and-forms
 tier: 2
 severity: ux-failure

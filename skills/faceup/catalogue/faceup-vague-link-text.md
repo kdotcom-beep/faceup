@@ -1,7 +1,7 @@
 ---
 id: faceup-vague-link-text
 title: Link text does not say where it goes
-summary: "Links say 'Click here' or 'Read more', which never names the destination. Put the destination in the link words."
+summary: "Link text must say where the link goes, not just 'click here' or 'read more'. Screen reader users often hear links listed out of context, where vague links all sound the same."
 failure_mode: cognition-and-clarity
 tier: 1
 severity: failure

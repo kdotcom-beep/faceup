@@ -1,7 +1,7 @@
 ---
 id: faceup-reflow-horizontal-scroll
 title: Content breaks when zoomed or on a narrow screen
-summary: "A fixed-width layout and text sized to the window break when the person zooms in or uses a narrow screen. Let sections shrink to fit, and size text in units that grow with zoom."
+summary: "Content must fit a narrow screen or zoomed page without sideways scrolling, and text must grow with zoom. Otherwise people who zoom in or use small phones must scroll back and forth on every line."
 failure_mode: state-and-edge-cases
 tier: 1
 severity: failure

@@ -1,7 +1,7 @@
 ---
 id: faceup-control-missing-name
 title: Button or link has no name
-summary: "An icon-only button or link has no name, so a screen reader announces only 'button' or 'link'. Add a name that is read out, with aria-label or text hidden on screen."
+summary: "Every button and link needs a name that screen readers can read out. Without one, screen reader users hear only 'button' or 'link', and voice control users have nothing to say to press it."
 failure_mode: naming-and-semantics
 tier: 1
 severity: failure

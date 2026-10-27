@@ -1,9 +1,9 @@
 ---
 id: faceup-label-not-in-name
 title: Spoken name differs from the visible label
-summary: "A button shows 'Send', but its hidden name is 'Submit form', so saying 'click Send' to voice control does nothing. Make the name contain the visible words, ideally at the start."
+summary: "A control's spoken name must contain the words shown on it. Voice control users say what they see, so a button labelled 'Send' but named 'Submit form' does not respond."
 failure_mode: naming-and-semantics
-tier: 2
+tier: 1
 severity: failure
 anchor:
   wcag:
@@ -19,8 +19,8 @@ detectable_by:
   wig: false
 detection:
   automatic: false
-  scanner: []
-  rendered: false
+  scanner: [browser]
+  rendered: true
   agent: true
   human_review: false
   manual_test: "Move a screen reader to each button, link and field that shows words, and check the name it reads out includes those visible words."
@@ -75,9 +75,9 @@ If the name needs more detail, start it with the visible words.
 ## How it is detected
 
 **What checks it today.**
-- The Face Up skill flags controls whose `aria-label` or `aria-labelledby` leaves out the visible words, and form fields whose visible label differs from their name.
+- Given a page address, the Face Up scanner reports buttons and links whose name leaves out their visible words, found by the `label-content-name-mismatch` check in axe, an automated testing tool.
+- The Face Up skill flags other controls whose `aria-label` or `aria-labelledby` leaves out the visible words, and form fields whose visible label differs from their name.
 - A person confirms each finding, and none blocks a release.
-- The scanner does not check this rule. When axe, an automated testing tool, reports a mismatch through its `label-content-name-mismatch` check, the scanner lists it outside the Face Up catalogue.
 
 **What it cannot catch.**
 - Text that is built while the page runs, translated, or passed in from another component.

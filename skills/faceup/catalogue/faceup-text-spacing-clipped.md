@@ -1,9 +1,9 @@
 ---
 id: faceup-text-spacing-clipped
 title: Text is cut off when spacing is increased
-summary: "Text boxes that hide anything past a fixed height or line count cut off text when someone widens text spacing. Let boxes grow with their text, and do not lock spacing with !important."
+summary: "Text must stay fully readable when people increase line, letter, word or paragraph spacing. People with dyslexia or low vision often widen spacing, and fixed-height boxes then cut their text off."
 failure_mode: state-and-edge-cases
-tier: 2
+tier: 1
 severity: failure
 anchor:
   wcag:
@@ -19,8 +19,8 @@ detectable_by:
   wig: false
 detection:
   automatic: false
-  scanner: []
-  rendered: false
+  scanner: [browser]
+  rendered: true
   agent: true
   human_review: false
   manual_test: "Apply the four text spacing values with a bookmarklet or browser extension and check that no text is cut off, hidden or overlapping."
@@ -101,11 +101,12 @@ If a preview must be short, cut off only a teaser that links to the full text. T
 
 **What checks it today.**
 - The Face Up skill looks for fixed-height text boxes that hide overflow, text cut to a set number of lines, and spacing locked with `!important` on the element itself.
-- The scanner does not check this rule or apply the spacing. When axe, a widely used testing tool, finds locked spacing below the values above, the scanner lists it outside the Face Up catalogue.
+- Given a page address, the Face Up scanner applies the four spacing values at 1280 pixels wide and reports text boxes that cut off text only once they are applied.
+- It also reports spacing locked with `!important` on the element itself, found by axe, a widely used testing tool.
 - A person confirms each finding, and none blocks a release.
 
 **What it cannot catch.**
-- Whether text is lost, which depends on the font, text length and screen width.
+- Text that overlaps other content instead of being cut off, and text lost at other screen widths.
 - Spacing set by JavaScript, and text inside images or drawn on a canvas.
 
 ## Related rules

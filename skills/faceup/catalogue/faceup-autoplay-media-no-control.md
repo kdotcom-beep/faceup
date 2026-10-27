@@ -1,7 +1,7 @@
 ---
 id: faceup-autoplay-media-no-control
 title: Audio or video plays on load with no controls
-summary: "Video or audio starts by itself when the page loads, with nothing to pause or stop it. Mute anything that must start on load and give it controls, or let the person start it."
+summary: "Audio or video must not play on load unless people can pause or stop it. Sound that starts by itself drowns out screen readers, and people in quiet places cannot silence it."
 failure_mode: motion-and-attention
 tier: 1
 severity: failure

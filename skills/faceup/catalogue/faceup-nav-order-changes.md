@@ -1,7 +1,7 @@
 ---
 id: faceup-nav-order-changes
 title: Menu order changes from page to page
-summary: "The main menu lists the same links on every page, but in a different order on some of them. Build the menu from one shared list so the order stays the same everywhere."
+summary: "Menus that repeat across pages must keep their links in the same order. People learn where links sit, so keyboard users who count Tab presses land on the wrong one when the order changes."
 failure_mode: flow-and-memory
 tier: 2
 severity: failure

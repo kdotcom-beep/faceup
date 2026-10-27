@@ -61,13 +61,47 @@ function cssPool(sheets) {
   return { restorers, removals };
 }
 
-function judgeCssPart(selector, removal, restorers) {
+const HTML_TAG = /<([a-zA-Z][\w-]*)(\s[^<>]*)?>/g;
+const htmlAttr = (attrs, name) => {
+  const m = attrs.match(new RegExp(`\\s${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`, 'i'));
+  return m ? (m[1] ?? m[2] ?? m[3]) : undefined;
+};
+
+// Every element in the project's markup that has a class or id, so a class-only selector can be traced to what uses it.
+function markupElements(docs, files) {
+  const elements = [];
+  for (const doc of docs.filter((d) => /\.html?$/i.test(d.path))) {
+    for (const [, tag, attrs = ''] of doc.src.matchAll(HTML_TAG)) {
+      const editable = htmlAttr(attrs, 'contenteditable');
+      elements.push({ tag: tag.toLowerCase(), classes: new Set((htmlAttr(attrs, 'class') ?? '').split(/\s+/).filter(Boolean)), id: htmlAttr(attrs, 'id'), tabindex: htmlAttr(attrs, 'tabindex'), editable: editable !== undefined && editable !== 'false' });
+    }
+  }
+  for (const file of files) {
+    for (const group of classGroups(file)) {
+      const tabIndex = literalValue(attribute(group.element, 'tabIndex'));
+      elements.push({ tag: tagOf(group.name), classes: new Set(group.tokens.map((t) => t.raw)), id: literalValue(attribute(group.element, 'id')), tabindex: tabIndex === undefined ? undefined : tabIndex === null ? null : String(tabIndex), editable: Boolean(attribute(group.element, 'contentEditable')) });
+    }
+  }
+  return elements;
+}
+
+const keyboardReachable = (el) => {
+  if (!el.tag || el.tabindex === null) return true;
+  if (el.tabindex !== undefined) return Number(el.tabindex) >= 0;
+  return FOCUSABLE_TAGS.has(el.tag) || el.editable;
+};
+
+function judgeCssPart(selector, removal, restorers, markup) {
   const compound = subjectCompound(selector);
   if (MOUSE_ONLY.test(compound) || compound.includes('::')) return 'skip';
   const focused = FOCUS.test(compound) || removal.focus;
   if (!focused && OTHER_STATE.test(compound)) return 'skip';
   const parts = simpleParts(compound);
   if (parts.some((p) => /^\[tabindex=["']?-1["']?\]$/i.test(p))) return 'skip';
+  if (parts.length && parts.every((p) => /^[.#]/.test(p))) {
+    const users = markup.filter((el) => parts.every((p) => (p[0] === '.' ? el.classes.has(p.slice(1)) : el.id === p.slice(1))));
+    if (users.length && !users.some(keyboardReachable)) return 'skip';
+  }
   const tag = parts.find((p) => /^[a-zA-Z]/.test(p));
   const broad = parts.every((p) => /^[a-zA-Z]/.test(p));
   if (!focused && tag && !FOCUSABLE_TAGS.has(tag.toLowerCase()) && !parts.some((p) => /^\[(tabindex|contenteditable|role)/i.test(p))) return 'skip';
@@ -82,11 +116,11 @@ function judgeCssPart(selector, removal, restorers) {
   return broad ? 'broad' : 'fail';
 }
 
-function judgeCss(pool, tailwindFocus) {
+function judgeCss(pool, tailwindFocus, markup) {
   const findings = [];
   const notAssessed = [];
   for (const removal of pool.removals) {
-    const verdicts = removal.rule.selectors.map((s) => judgeCssPart(s, removal, pool.restorers));
+    const verdicts = removal.rule.selectors.map((s) => judgeCssPart(s, removal, pool.restorers, markup));
     const base = { file: removal.file, rule: RULE };
     if (verdicts.includes('fail') || (verdicts.includes('broad') && !tailwindFocus)) findings.push({ ...base, line: removal.line, column: 1, message: MESSAGE });
     else if (verdicts.includes('broad')) notAssessed.push({ ...base, reason: 'the outline is removed for every control of a type, and some components add their own keyboard style in class names, so it depends on each control' });
@@ -156,7 +190,7 @@ export const focusVisible = {
     const pool = cssPool(sheets);
     const tokensByFile = new Map(project.files.map((f) => [f.path, fileTokens(f)]));
     const tailwindFocus = [...tokensByFile.values()].some((tokens) => tokens.some((t) => isFocusMarker(t, OWN_FOCUS_VARIANT)));
-    const { findings, notAssessed } = judgeCss(pool, tailwindFocus);
+    const { findings, notAssessed } = judgeCss(pool, tailwindFocus, markupElements(docs, project.files));
     const context = { restorers: pool.restorers, tokensByFile, index: indexProject(project.files) };
     for (const file of project.files) {
       for (const group of classGroups(file)) {

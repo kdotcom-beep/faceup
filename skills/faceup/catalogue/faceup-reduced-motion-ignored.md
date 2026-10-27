@@ -1,7 +1,7 @@
 ---
 id: faceup-reduced-motion-ignored
 title: Animation ignores the reduce-motion setting
-summary: "Parallax, lifting cards and scroll fades play for everyone, including people who have asked their device for less motion. Add styles that stop or reduce movement when that setting is on."
+summary: "Animations should stop or reduce when a person's device is set to reduce motion. Large movement can cause nausea, dizziness or migraines for people with vestibular (balance) disorders."
 failure_mode: motion-and-attention
 tier: 1
 severity: ux-failure

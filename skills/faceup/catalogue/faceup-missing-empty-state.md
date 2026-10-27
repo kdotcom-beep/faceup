@@ -1,7 +1,7 @@
 ---
 id: faceup-missing-empty-state
 title: Empty list shows nothing
-summary: "When a list has no records, the person sees a blank area with no explanation. Say why the list is empty and give one clear next step."
+summary: "A list with nothing in it should say why it is empty and what to do next. A blank area looks the same whether there is nothing yet, nothing matched or the app is broken."
 failure_mode: state-and-edge-cases
 tier: 1
 severity: ux-failure

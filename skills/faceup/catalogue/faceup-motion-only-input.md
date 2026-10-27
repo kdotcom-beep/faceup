@@ -1,7 +1,7 @@
 ---
 id: faceup-motion-only-input
 title: Shaking or tilting is the only way to do something
-summary: "Undo works only by shaking the phone, with no button and no way to turn shaking off. Add a button for the same action and a setting that switches the motion response off."
+summary: "Actions triggered by shaking or tilting need a button alternative and a way to turn motion off. People with a mounted phone cannot shake it, and people with tremors trigger it by accident."
 failure_mode: input-and-forms
 tier: 2
 severity: failure

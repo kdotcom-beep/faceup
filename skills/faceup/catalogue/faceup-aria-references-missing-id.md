@@ -1,7 +1,7 @@
 ---
 id: faceup-aria-references-missing-id
 title: Label or description points to an element that is not there
-summary: "A button or field takes its name or hint from text that is not on the page, so a screen reader has nothing to read. Add the missing text or name the control directly."
+summary: "When a control takes its name or hint from another element, that element must exist on the page. If it does not, screen readers announce only 'button' and skip the hint entirely."
 failure_mode: naming-and-semantics
 tier: 1
 severity: failure

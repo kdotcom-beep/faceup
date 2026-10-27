@@ -1,7 +1,7 @@
 ---
 id: faceup-orientation-locked
 title: Page only works upright or sideways
-summary: "The page hides its content and asks people to rotate their device, or locks itself to one direction. Let the layout work both upright and sideways."
+summary: "A page must work whether the device is held upright or sideways. People with a mounted device cannot turn it, and some people with low vision turn theirs sideways for larger text."
 failure_mode: state-and-edge-cases
 tier: 2
 severity: failure

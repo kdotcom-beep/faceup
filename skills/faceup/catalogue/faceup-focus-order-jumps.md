@@ -1,7 +1,7 @@
 ---
 id: faceup-focus-order-jumps
 title: Focus jumps around the page
-summary: "Pressing Tab moves through the page in an order that does not match the layout, or leaves focus behind an open dialog. Write the code in visual order and move focus into dialogs."
+summary: "Pressing Tab should move through the page in the same order people read it. When focus jumps around or skips an open dialog, keyboard users miss fields and lose their place."
 failure_mode: focus-and-keyboard
 tier: 2
 severity: failure

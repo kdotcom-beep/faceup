@@ -1,7 +1,7 @@
 ---
 id: faceup-inconsistent-naming
 title: Same action has a different name on each page
-summary: "The button that saves changes says 'Save' on one page, 'Update' on the next and 'Submit' on a third. Give each action one name and use it everywhere."
+summary: "An action that repeats across pages should keep the same name. People with memory or cognitive disabilities read a new word as a new action, and voice control users cannot find it."
 failure_mode: flow-and-memory
 tier: 2
 severity: failure

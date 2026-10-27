@@ -1,7 +1,7 @@
 ---
 id: faceup-single-way-to-page
 title: Only one way to reach a page
-summary: "Some pages can only be reached through the menu, with no search, site map or related links. Give every page at least two ways in."
+summary: "Every page must be reachable in at least two ways, such as a menu and a search or site map. Deep menus are hard for people with cognitive disabilities and slow for screen reader users."
 failure_mode: flow-and-memory
 tier: 2
 severity: failure
@@ -71,6 +71,7 @@ function Article({ article }) {
 - People with cognitive disabilities struggle to hold a deep menu in mind, and screen reader users move through it slowly.
 - Fails WCAG 2.2 success criterion 2.4.5, Multiple Ways, Level AA.
 - Search, a site map, a table of contents, related links or a list of all pages each count as a second way.
+- On a small site, a menu on every page that links to every page, home page included, is enough on its own: W3C says those links also serve as a site map. A menu that lists only the main sections is one way.
 - Steps in a process and their results, such as checkout or a confirmation page, are exempt.
 - A one-page site is exempt, because the criterion covers sets of pages.
 

@@ -1,7 +1,7 @@
 ---
 id: faceup-error-not-identified
 title: Error message is vague and not linked to its field
-summary: "An error under a field is not linked to it and only says 'Invalid input'. Link the message to the field and say how to fix the problem."
+summary: "An error message should be linked to its field and say how to fix the problem. Otherwise screen reader users do not hear it at the field, and nobody learns what to change."
 failure_mode: feedback-and-status
 tier: 3
 severity: failure

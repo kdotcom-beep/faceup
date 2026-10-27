@@ -28,6 +28,7 @@ export function formatText(result, gating) {
   if (result.browser) {
     out.push(`Checked ${plural(result.browser.pages.length, 'page')} in ${result.browser.name} with axe ${result.browser.axeVersion ?? ''} and Face Up's browser checks. Browser findings are for review and never fail the build.`);
     if (result.browser.axeOther.length) out.push(`axe also found ${plural(result.browser.axeOther.length, 'problem')} outside the Face Up catalogue. The JSON output lists them.`);
+    if (result.browser.axeIncomplete.length) out.push(`axe could not decide ${plural(result.browser.axeIncomplete.reduce((n, i) => n + i.nodes, 0), 'place')} for checks outside the Face Up catalogue, such as text over a picture. A person needs to check them. The JSON output lists each one.`);
     for (const e of result.browser.pageErrors) out.push(`Could not check ${e.page}: ${e.message}`);
   }
   if (result.notAssessed.length) out.push(`${plural(result.notAssessed.length, 'place')} not assessed because the scan could not decide them. The JSON output lists each one with the reason.`);

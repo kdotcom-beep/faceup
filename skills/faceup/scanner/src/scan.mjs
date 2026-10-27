@@ -2,6 +2,7 @@ import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { listSources, looksGenerated, parseSource } from './ast.mjs';
 import { listDocuments, readDocument } from './styles.mjs';
+import { withTemplateMarkup } from './template-markup.mjs';
 import { loadRules, SEVERITY_RANK } from './rules.mjs';
 import { stateBranches } from './checks/state-branches.mjs';
 import { controlName } from './checks/control-name.mjs';
@@ -9,6 +10,7 @@ import { divButton } from './checks/div-button.mjs';
 import { pageStructure } from './checks/page-structure.mjs';
 import { focusVisible } from './checks/focus-visible.mjs';
 import { reducedMotion } from './checks/reduced-motion.mjs';
+import { pinnedBarGap } from './checks/pinned-bar-gap.mjs';
 
 export const CHECKS = [
   { check: stateBranches },
@@ -17,6 +19,7 @@ export const CHECKS = [
   { check: pageStructure, rules: ['faceup-heading-order', 'faceup-vague-link-text'] },
   { check: focusVisible },
   { check: reducedMotion },
+  { check: pinnedBarGap },
 ];
 
 const enabledRules = (entry) => entry.rules ?? entry.check.rules;
@@ -62,6 +65,7 @@ export function scan(paths, { rulesUrl, cwd = process.cwd() } = {}) {
   const files = [];
   const parseErrors = [];
   const skipped = [];
+  const unreadMarkup = [];
   const project = (root) => {
     if (!projects.has(root)) projects.set(root, { files: [], documents: [] });
     return projects.get(root);
@@ -85,6 +89,9 @@ export function scan(paths, { rulesUrl, cwd = process.cwd() } = {}) {
       }
       try {
         const parsed = { path: file, src, ast: parseSource(src) };
+        const markup = withTemplateMarkup(src, parsed.ast);
+        if (markup) Object.assign(parsed, { src: markup.src, ast: markup.ast });
+        if (markup?.unread) unreadMarkup.push({ file: display(file, cwd), rule: null, reason: `${markup.unread} piece${markup.unread === 1 ? '' : 's'} of markup built in template strings could not be read, so the code checks did not see ${markup.unread === 1 ? 'it' : 'them'}.` });
         const root = packageRoot(file, base, roots);
         files.push(parsed);
         project(root).files.push(parsed);
@@ -106,6 +113,7 @@ export function scan(paths, { rulesUrl, cwd = process.cwd() } = {}) {
       notAssessed.push(...result.notAssessed.filter((n) => enabled.has(n.rule)).map((n) => ({ ...n, file: display(n.file, cwd) })));
     }
   }
+  notAssessed.push(...unreadMarkup);
   findings.sort(byLocation);
   notAssessed.sort((a, b) => a.file.localeCompare(b.file) || (a.component ?? '').localeCompare(b.component ?? ''));
 

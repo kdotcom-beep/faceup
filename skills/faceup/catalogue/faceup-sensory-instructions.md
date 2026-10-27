@@ -1,7 +1,7 @@
 ---
 id: faceup-sensory-instructions
 title: Instructions rely on colour, shape or position
-summary: "Instructions point to things only by how they look or where they sit, such as 'press the green button'. Name each thing by its visible label as well."
+summary: "Instructions must name things by their label, not only by colour, shape or position, such as 'the green button'. Screen reader users cannot see these cues, and layouts often move things on smaller screens."
 failure_mode: cognition-and-clarity
 tier: 2
 severity: failure

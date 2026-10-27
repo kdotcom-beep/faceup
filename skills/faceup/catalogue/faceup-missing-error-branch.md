@@ -1,7 +1,7 @@
 ---
 id: faceup-missing-error-branch
 title: Failed data load shows no error
-summary: "The page plans only for data loading successfully, so a failure leaves a spinner that never stops or a blank area. Show a specific error and a way to try again."
+summary: "When data fails to load, the page should show a clear error and a way to try again. Otherwise people wait on a spinner that never stops, or see a blank area with no explanation."
 failure_mode: state-and-edge-cases
 tier: 1
 severity: ux-failure

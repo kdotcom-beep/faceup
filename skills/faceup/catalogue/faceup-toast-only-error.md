@@ -1,7 +1,7 @@
 ---
 id: faceup-toast-only-error
 title: Error appears only in a pop-up that is not announced
-summary: "A save error appears in a small corner pop-up that screen readers do not announce. Put the message in an announcement area that stays on the page."
+summary: "Error messages must be announced to screen readers and stay on screen long enough to read. A pop-up that vanishes unannounced leaves screen reader users assuming the action worked, and their work is lost."
 failure_mode: feedback-and-status
 tier: 2
 severity: failure

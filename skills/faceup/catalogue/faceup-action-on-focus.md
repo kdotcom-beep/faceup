@@ -1,7 +1,7 @@
 ---
 id: faceup-action-on-focus
 title: Moving focus onto a control triggers an action
-summary: "Tabbing onto a field or button opens a window, submits the form, moves focus or loads a page. Act only when the person clicks, presses a key or changes a value."
+summary: "Moving keyboard focus onto a control must not submit a form, open a window or load a page. Otherwise keyboard and screen reader users passing through are sent somewhere they did not choose."
 failure_mode: input-and-forms
 tier: 2
 severity: failure

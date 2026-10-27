@@ -1,7 +1,7 @@
 ---
 id: faceup-visual-order-differs
 title: Layout puts content in a different reading order
-summary: "CSS rearranges content on screen while screen readers follow the code, so they read it in an order that changes the meaning. Write the code in reading order and let the layout follow."
+summary: "Content must appear in the code in the same order it is meant to be read. Screen readers and keyboards follow the code, so a rearranged layout can read the answer before the question."
 failure_mode: naming-and-semantics
 tier: 2
 severity: failure

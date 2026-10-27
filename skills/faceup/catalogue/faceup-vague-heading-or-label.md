@@ -1,7 +1,7 @@
 ---
 id: faceup-vague-heading-or-label
 title: Heading or label says nothing about what follows
-summary: "Headings such as 'Details' or 'Section 1' and labels such as 'Value' do not say what each part is for. Name each section's topic and each field's purpose."
+summary: "Headings and labels must describe their topic or purpose. Words such as 'Details' or 'Value' tell screen reader users, who often hear them out of context, nothing about what follows."
 failure_mode: cognition-and-clarity
 tier: 3
 severity: failure

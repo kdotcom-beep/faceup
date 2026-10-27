@@ -1,7 +1,7 @@
 ---
 id: faceup-placeholder-as-label
 title: Placeholder text is the only label
-summary: "The grey hint text inside a field is its only label, and it disappears once typing starts. Give each field a label that stays visible."
+summary: "Every field needs a label that stays visible, not just grey hint text inside it. The hint vanishes once typing starts, leaving people unsure what the field was for."
 failure_mode: input-and-forms
 tier: 1
 severity: failure

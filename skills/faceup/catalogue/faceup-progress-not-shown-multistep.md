@@ -1,7 +1,7 @@
 ---
 id: faceup-progress-not-shown-multistep
 title: Multi-step form does not show progress
-summary: "Each step of a sign-up shows a heading and a Next button but gives no sign of how many steps there are. Show the current step and the total on every step."
+summary: "A form split into steps should show which step the person is on and how many there are. Without it, people cannot judge how long is left, and some give up."
 failure_mode: flow-and-memory
 tier: 2
 severity: ux-failure

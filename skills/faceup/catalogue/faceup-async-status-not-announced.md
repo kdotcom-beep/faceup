@@ -1,7 +1,7 @@
 ---
 id: faceup-async-status-not-announced
 title: Loading and saving status is not announced
-summary: "A save shows a spinner and 'Saved' on screen, but a screen reader hears none of it. Put the status in an area marked for announcements so each change is read out."
+summary: "Status changes such as 'Saving' and 'Saved' must be announced to screen readers, not only shown on screen. Without the announcement, screen reader users cannot tell whether their action worked."
 failure_mode: feedback-and-status
 tier: 2
 severity: failure

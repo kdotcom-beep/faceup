@@ -1,7 +1,7 @@
 ---
 id: faceup-action-on-press
 title: Action fires on press, before release
-summary: "A delete button acts the moment it is pressed, so a slip cannot be cancelled. Run the action on release, which onClick already does."
+summary: "A control should act when the pointer is released, not when it is pressed. Acting on release lets people with tremors or low vision cancel a mistaken press by sliding off before letting go."
 failure_mode: input-and-forms
 tier: 2
 severity: failure

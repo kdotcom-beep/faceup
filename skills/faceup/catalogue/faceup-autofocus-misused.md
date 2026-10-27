@@ -1,7 +1,7 @@
 ---
 id: faceup-autofocus-misused
 title: Page moves focus to a field on load
-summary: "The page moves keyboard focus to a field far down on load, so the person lands somewhere they did not choose. Let the page open at the top."
+summary: "A page should not move keyboard focus to a field when it loads. The jump makes screen reader and magnifier users lose their place and skips keyboard users past the heading and navigation."
 failure_mode: cognition-and-clarity
 tier: 2
 severity: ux-failure

@@ -1,7 +1,7 @@
 ---
 id: faceup-redundant-entry-multistep
 title: Form asks for information already given
-summary: "A checkout asks for the delivery address, then asks for the same details again as the billing address. Carry the earlier answer forward and let the person change it."
+summary: "A form should not ask for information the person has already given. Entering it twice costs people with motor impairments real effort and makes people with memory difficulties recall it again."
 failure_mode: flow-and-memory
 tier: 2
 severity: failure

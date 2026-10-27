@@ -1,7 +1,7 @@
 ---
 id: faceup-infinite-scroll-no-url-state
 title: "Infinite scroll loses the person's place"
-summary: "A feed that loads more as you scroll forgets your place when you leave or reload. Save the position in the web address so you come back to where you were."
+summary: "A feed that loads more as people scroll should remember their place when they leave and return. Otherwise keyboard and switch users, and people on slow connections, must scroll all the way back down."
 failure_mode: flow-and-memory
 tier: 2
 severity: ux-failure

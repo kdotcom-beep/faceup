@@ -1,7 +1,7 @@
 ---
 id: faceup-hover-content-not-dismissible
 title: Tooltip cannot be dismissed or reached
-summary: "A tooltip closes the moment the pointer moves, so nobody can reach or dismiss it. Let Escape close it, and keep it open while the pointer is over it."
+summary: "Tooltips must stay open while the pointer is over them and close when Escape is pressed. Otherwise some people cannot read them and others cannot get them out of the way."
 failure_mode: feedback-and-status
 tier: 2
 severity: failure

@@ -1,7 +1,7 @@
 ---
 id: faceup-focus-obscured-sticky
 title: Sticky header hides the focused control
-summary: "A header pinned to the top of the screen covers the field the keyboard has moved to. Tell the browser to leave a gap the height of the header when it scrolls."
+summary: "A sticky header or footer must not cover the control that has keyboard focus. When it does, keyboard users and people with low vision lose their place and type into a hidden field."
 failure_mode: focus-and-keyboard
 tier: 1
 severity: failure
@@ -23,7 +23,7 @@ detectable_by:
   wig: true
 detection:
   automatic: false
-  scanner: [browser]
+  scanner: [code, browser]
   rendered: true
   agent: true
   human_review: false
@@ -82,15 +82,16 @@ Keeping the full header height clear also meets the Level AAA version.
 ## How it is detected
 
 **What checks it today.**
-- Given a page address, the Face Up scanner tabs through the page in a window 1280 by 800 pixels. It reports any focused control fully covered by a solid pinned bar, such as a header, cookie bar or promotion.
-- See-through layers do not count, and controls under an embedded frame are left for a person.
-- On 33 well-known sites tested in October 2026, all 7 findings were real, mostly cookie bars and promotions.
-- The Face Up skill checks that a bar pinned to an edge has a matching gap on that side.
+- The Face Up scanner reads the styles for a bar pinned to the top or bottom of the screen with no scroll-padding on that side.
+- Given a page address, it also moves through the page with Tab and then Shift+Tab, at 1280 pixels wide and again at 375. It reports any focused control fully covered by a pinned bar, such as a header, cookie bar or promotion.
+- A bar counts as covering when it is solid or blurs what is behind it. Tinted overlays you can see through do not count, and controls under an embedded frame are left for a person.
+- On 33 well-known sites tested in October 2026, tabbing forwards at 1280 pixels, all 7 findings were real, mostly cookie bars and promotions.
 - Findings are for review and never fail a build.
 
 **What it cannot catch.**
-- Partly covered controls, moving back with Shift+Tab, links within the page, and other window sizes.
+- Partly covered controls, links within the page, and window sizes other than 1280 and 375 pixels.
 - A header whose height changes after the page loads.
+- Bars pinned with class names such as Tailwind's, or with inline styles, which the style check does not read.
 
 ## Related rules
 

@@ -1,4 +1,4 @@
-import { classGroups, packageRoot, parseCss, parseToken, projectDocuments, splitTopLevel, stylesheetText } from '../styles.mjs';
+import { classGroups, packageRoot, parseCss, parseToken, projectDocuments, simpleParts, splitTopLevel, stylesheetText, subjectCompound } from '../styles.mjs';
 
 const RULE = 'faceup-reduced-motion-ignored';
 const SHEET_MESSAGE = 'Things on this page move or animate, and nothing in the styles turns this movement off for people who have asked their device for less motion.';
@@ -39,22 +39,35 @@ function movesInAnimation(value, keyframes) {
   return !names.length || names.some((n) => MOVING_KEYFRAME.test(keyframes.get(n)) && !onlyRotates(keyframes.get(n)));
 }
 
+const withoutState = (selector) => selector.replace(/:(hover|focus-visible|focus-within|focus|active)(?![\w-])/g, '').trim();
 const inMotionQuery = (rule) => rule.media.some((m) => /prefers-reduced-motion/i.test(m));
 
 function calmedSelectors(parsed) {
   return parsed.rules
     .filter((r) => r.media.some((m) => /prefers-reduced-motion\s*:\s*reduce/i.test(m)) && r.decls.some((d) => /^(animation|transition|transform)/.test(d.prop)))
-    .flatMap((r) => r.selectors.map((s) => s.trim()));
+    .flatMap((r) => r.selectors.map(withoutState));
+}
+
+// A transition of transform whose element is only ever rotated, such as a chevron that flips, turns in place.
+function onlyTurns(rule, value, parsed) {
+  const items = splitTopLevel(value.toLowerCase(), ',').map((item) => item.trim().split(/\s+/)[0]);
+  if (items.some((p) => MOVING_PROP.test(p) && !/^(transform|rotate)$/.test(p))) return false;
+  const subjects = rule.selectors.map((s) => simpleParts(subjectCompound(s)));
+  const shares = (selector) => simpleParts(subjectCompound(selector)).some((p) => subjects.some((parts) => parts.includes(p)));
+  const moves = parsed.rules
+    .filter((r) => r !== rule && r.selectors.some(shares))
+    .flatMap((r) => r.decls.filter((d) => /^(transform|translate|scale|rotate)$/.test(d.prop) && !NO_MOTION.test(d.value.trim())));
+  return moves.length > 0 && moves.every((d) => d.prop === 'rotate' || (d.prop === 'transform' && /^(rotate[xyz]?\([^)]*\)\s*)+$/.test(d.value.trim().toLowerCase())));
 }
 
 function firstMotion(parsed, keyframes, calmed) {
   const decls = parsed.rules.flatMap((r) => r.decls);
   const transforms = decls.some((d) => /^(transform|translate|scale|rotate)$/.test(d.prop) && !NO_MOTION.test(d.value.trim()));
   for (const rule of parsed.rules) {
-    if (inMotionQuery(rule) || (rule.selectors.length && rule.selectors.every((s) => calmed.has(s.trim())))) continue;
+    if (inMotionQuery(rule) || (rule.selectors.length && rule.selectors.every((s) => calmed.has(withoutState(s))))) continue;
     for (const decl of rule.decls) {
       if ((decl.prop === 'animation' || decl.prop === 'animation-name') && movesInAnimation(decl.value, keyframes)) return decl.line;
-      if ((decl.prop === 'transition' || decl.prop === 'transition-property') && movesInTransition(decl.value, transforms)) return decl.line;
+      if ((decl.prop === 'transition' || decl.prop === 'transition-property') && movesInTransition(decl.value, transforms) && !onlyTurns(rule, decl.value, parsed)) return decl.line;
     }
     const applied = rule.applies.find((a) => tailwindMotion(a.tokens.map(parseToken)));
     if (applied) return applied.line;
