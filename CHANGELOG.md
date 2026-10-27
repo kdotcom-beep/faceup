@@ -29,6 +29,7 @@ These changes come from running the skill on two real projects, a static marketi
 ### Fixed
 
 - The focus outline check no longer reports elements the keyboard never reaches, such as a dialog with `tabindex="-1"`.
+- The pinned bar check now counts only room left on the page itself, on a box that scrolls, or on every focused element. Before, scroll-padding set on any one element, such as a single panel, hid a missing gap for the page's own bar.
 - The reduced-motion check accepts a reduce-motion rule that turns off a hover movement, and no longer reports icons that only rotate.
 
 ## 27 October 2026

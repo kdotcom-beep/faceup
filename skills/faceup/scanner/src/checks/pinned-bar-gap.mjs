@@ -23,7 +23,17 @@ function pinnedEdge(rule) {
   return top !== undefined ? 'top' : 'bottom';
 }
 
-const hasGap = (rules, edge) => rules.some((r) => r.decls.some((d) => GAP[edge].test(d.prop) && !d.value.trim().split(/\s+/).every((v) => ZERO.test(v))));
+const PAGE = /^(html|:root|body)$/i;
+const BROAD = /^(\*|[a-z][a-z0-9-]*)?(\[[^\]]*\])?(:focus|:focus-visible|:focus-within|:target|:(where|is)\([^)]*\))*$/i;
+const SCROLLS = /^(auto|scroll)$/;
+
+function coversPage(rule, prop) {
+  const own = (s) => s.trim().replace(/^(html|:root|body)\s+/i, '');
+  if (prop.startsWith('scroll-margin')) return rule.selectors.some((s) => own(s) && BROAD.test(own(s)));
+  return rule.selectors.some((s) => PAGE.test(s.trim())) || ['overflow', 'overflow-y', 'overflow-block'].some((p) => SCROLLS.test(value(rule, p) ?? ''));
+}
+
+const hasGap = (rules, edge) => rules.some((r) => r.decls.some((d) => GAP[edge].test(d.prop) && !d.value.trim().split(/\s+/).every((v) => ZERO.test(v)) && coversPage(r, d.prop)));
 
 export const pinnedBarGap = {
   name: 'pinned-bar-gap',
