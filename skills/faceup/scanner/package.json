@@ -1,6 +1,7 @@
 {
   "name": "faceup-scanner",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "bin": {
     "faceup-scan": "bin/faceup-scan.mjs"

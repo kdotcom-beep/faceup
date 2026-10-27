@@ -31,4 +31,4 @@ Findings are against the Face Up catalogue only. Zero findings is not a claim of
 
 ## Licence
 
-Not yet chosen.
+MIT. See [LICENSE](LICENSE).
