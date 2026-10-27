@@ -1,0 +1,19 @@
+{
+  "name": "faceup-scanner",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "faceup-scan": "bin/faceup-scan.mjs"
+  },
+  "engines": {
+    "node": ">=18.3"
+  },
+  "scripts": {
+    "scan": "node bin/faceup-scan.mjs"
+  },
+  "dependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@babel/parser": "7.29.9",
+    "playwright": "^1.64.1"
+  }
+}
