@@ -17,7 +17,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -120,7 +119,7 @@ Loading more replaces the current history entry instead of adding one, so a sing
 
 **What checks it today.**
 - The Face Up skill reads the code for lists that load more on scroll but save nothing to the web address or history.
-- The scanner does not check this rule, and no finding blocks a release.
+- The scanner does not check this rule.
 
 **What it cannot catch.**
 - Whether the person's place is actually lost, since the code pattern is only a warning sign.

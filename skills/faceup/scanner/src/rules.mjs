@@ -8,7 +8,6 @@ const CATALOGUE = join(ROOT, 'catalogue');
 const LOCAL_PAGES = join(ROOT, 'site', 'rules');
 
 export const SEVERITY_LABELS = { failure: 'Failure', 'ux-failure': 'UX failure', smell: 'Smell' };
-export const SEVERITY_RANK = { smell: 1, 'ux-failure': 2, failure: 3 };
 
 function ruleUrl(id, baseUrl) {
   if (baseUrl) return `${baseUrl.replace(/\/+$/, '')}/rules/${id}.html`;
@@ -26,7 +25,6 @@ export function loadRules(baseUrl) {
       tier: data.tier,
       failureMode: data.failure_mode,
       wcag: (data.anchor.wcag ?? []).map((w) => `${w.criterion} ${w.name} (Level ${w.level})`),
-      gateable: data.detection.automatic === true,
       url: ruleUrl(data.id, baseUrl),
     });
   }

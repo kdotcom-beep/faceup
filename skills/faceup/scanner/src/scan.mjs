@@ -3,7 +3,7 @@ import { dirname, join, relative, resolve, sep } from 'node:path';
 import { listSources, looksGenerated, parseSource } from './ast.mjs';
 import { listDocuments, readDocument } from './styles.mjs';
 import { withTemplateMarkup } from './template-markup.mjs';
-import { loadRules, SEVERITY_RANK } from './rules.mjs';
+import { loadRules } from './rules.mjs';
 import { stateBranches } from './checks/state-branches.mjs';
 import { controlName } from './checks/control-name.mjs';
 import { divButton } from './checks/div-button.mjs';
@@ -14,8 +14,8 @@ import { pinnedBarGap } from './checks/pinned-bar-gap.mjs';
 
 export const CHECKS = [
   { check: stateBranches },
-  { check: controlName, canFailBuild: true },
-  { check: divButton, canFailBuild: true },
+  { check: controlName },
+  { check: divButton },
   { check: pageStructure, rules: ['faceup-heading-order', 'faceup-vague-link-text'] },
   { check: focusVisible },
   { check: reducedMotion },
@@ -103,10 +103,8 @@ export function scan(paths, { rulesUrl, cwd = process.cwd() } = {}) {
 
   const findings = [];
   const notAssessed = [];
-  const canFailBuild = new Set();
   for (const entry of CHECKS) {
     const enabled = new Set(enabledRules(entry));
-    if (entry.canFailBuild) enabled.forEach((id) => canFailBuild.add(id));
     for (const scope of projects.values()) {
       const result = entry.check.run(scope);
       findings.push(...result.findings.filter((f) => enabled.has(f.rule)).map((f) => ({ ...f, file: display(f.file, cwd) })));
@@ -117,14 +115,5 @@ export function scan(paths, { rulesUrl, cwd = process.cwd() } = {}) {
   findings.sort(byLocation);
   notAssessed.sort((a, b) => a.file.localeCompare(b.file) || (a.component ?? '').localeCompare(b.component ?? ''));
 
-  return { rules, checks: CHECKS.map((c) => c.check.name), canFailBuild, filesScanned: files.length + [...projects.values()].reduce((n, p) => n + p.documents.length, 0), skipped, parseErrors, findings, notAssessed };
-}
-
-export function gatingFindings(result, failOn) {
-  if (failOn === 'none') return [];
-  const threshold = SEVERITY_RANK[failOn];
-  return result.findings.filter((f) => {
-    const rule = result.rules.get(f.rule);
-    return !f.page && result.canFailBuild.has(f.rule) && rule.gateable && SEVERITY_RANK[rule.severity] >= threshold;
-  });
+  return { rules, checks: CHECKS.map((c) => c.check.name), filesScanned: files.length + [...projects.values()].reduce((n, p) => n + p.documents.length, 0), skipped, parseErrors, findings, notAssessed };
 }

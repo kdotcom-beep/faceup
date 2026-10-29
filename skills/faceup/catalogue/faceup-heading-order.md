@@ -15,7 +15,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: [code, browser]
   rendered: true
   agent: false
@@ -80,7 +79,7 @@ Levels step down one at a time, so if Billing later gains sections of its own, t
 - The Face Up scanner reports a jump down of more than one level within a component (a reusable piece of the page) or HTML file, and an HTML page with no level 1 heading.
 - It marks the spot as not assessed when another component sits between two headings, or a component's first heading is level 3 or lower, because the missing level may come from elsewhere.
 - Given a page address, the scanner also runs axe, which reports jumps and a missing level 1 heading on the live page.
-- Findings are for review and never fail a build.
+- Findings are for review.
 
 **What it cannot catch.**
 - A level with no gap that is still wrong, such as two sections at level 2 when one belongs inside the other.

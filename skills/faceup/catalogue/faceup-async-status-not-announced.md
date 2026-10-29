@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -102,7 +101,7 @@ The spinner is hidden from screen readers because the text already carries the m
 **What checks it today.**
 - The Face Up skill finds background actions, such as a save, and checks that the on-screen changes they cause sit inside an announcement area.
 - A progress bar counts only when an announcement area reads its progress out.
-- A person confirms each finding, and findings never block a release.
+- A person confirms each finding.
 
 **What it cannot catch.**
 - Whether the update is actually read out when the page runs. An area that starts empty and is filled later is read out, but one added with its text already inside may not be.

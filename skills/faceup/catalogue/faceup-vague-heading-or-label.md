@@ -20,7 +20,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -85,7 +84,7 @@ Name each section's topic and each field's purpose, in your users' words.
 **What checks it today.**
 - The Face Up skill flags headings and field labels that name no topic, such as "Details", "Info", "Section 1", "Value", "Field" or "Untitled". It also flags the same text repeated across headings at the same level.
 - Neither the Face Up scanner nor common automated checkers test it.
-- A person confirms each finding, and no finding blocks a release.
+- A person confirms each finding.
 
 **What it cannot catch.**
 - Whether a heading or label is clear to the product's users.

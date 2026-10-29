@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: true
@@ -76,8 +75,10 @@ If the name needs more detail, start it with the visible words.
 
 **What checks it today.**
 - Given a page address, the Face Up scanner reports buttons and links whose name leaves out their visible words, found by the `label-content-name-mismatch` check in axe, an automated testing tool.
+- It passes a name that holds each block of visible text unbroken and in order, with more detail between, such as a score link named "Wed, 30 Sept, Final score, IAW 364 & 257" that shows "Wed, 30 Sept" and "364 & 257". Saying any of the visible words still reaches it.
+- On a card with several blocks of text, such as a brand, a product name and "Shop now", it treats the largest text as the label and passes the card when its name holds that text. Visible text the control uses as its description is not treated as part of its label.
 - The Face Up skill flags other controls whose `aria-label` or `aria-labelledby` leaves out the visible words, and form fields whose visible label differs from their name.
-- A person confirms each finding, and none blocks a release.
+- A person confirms each finding.
 
 **What it cannot catch.**
 - Text that is built while the page runs, translated, or passed in from another component.

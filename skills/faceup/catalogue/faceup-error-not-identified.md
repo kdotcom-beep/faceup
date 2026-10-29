@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -106,7 +105,7 @@ Marking the field invalid is one accepted way to meet 3.3.1.
 **What checks it today.**
 - The Face Up skill flags error messages that are not connected to their field, and fields not marked invalid.
 - It flags messages, such as "Invalid input", that do not say how to fix the problem.
-- A person decides whether the wording fails 3.3.3. Findings never block a release.
+- A person decides whether the wording fails 3.3.3.
 
 **What it cannot catch.**
 - Whether the wording is specific enough, which only a person can judge.

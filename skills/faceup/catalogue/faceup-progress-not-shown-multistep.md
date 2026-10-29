@@ -15,7 +15,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -96,7 +95,6 @@ A progress bar with a text label, or a list of steps with the current one marked
 **What checks it today.**
 - The Face Up skill reads each step of a multi-step process and flags any step with no indicator, or with a step number but no total.
 - Checking one screen at a time misses this, because each step is built separately.
-- No finding blocks a release.
 
 **What it cannot catch.**
 - Whether a single-page form with visually separate sections counts as multi-step, which a person must judge.

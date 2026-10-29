@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -77,7 +76,7 @@ Reserve code that runs on arrival for small changes that leave the person where 
 
 **What checks it today.**
 - The Face Up skill looks for code that runs on arrival and loads a page, sends a form, opens a window, moves focus elsewhere or replaces large parts of the page.
-- A person confirms each finding, and findings never block a release.
+- A person confirms each finding.
 - The scanner has no check for this rule.
 
 **What it cannot catch.**

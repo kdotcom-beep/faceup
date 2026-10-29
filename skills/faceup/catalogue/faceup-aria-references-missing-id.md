@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: false
@@ -75,9 +74,10 @@ Where a control has no visible text to point to, name it with `aria-label`, whic
 **What checks it today.**
 - The scanner opens the page in a browser and reports any reference, such as aria-labelledby, that points to an id missing from the page.
 - It skips hidden elements, closed controls and unselected tabs, whose targets often appear only when opened.
+- It reports a label reference only when none of its targets exist, because an element that still finds one of them still has a name. It reports a description only on a control, because screen readers read descriptions out only on controls. It reports an error message reference only when the field is marked invalid, because the message is often added at that point.
 - On 33 well-known sites tested in October 2026, the 18 findings outside one site were all real. That site's 28 wrong findings all came from unselected tabs, which the scanner now skips.
 - Some real findings were not WCAG failures, because the control took its name from elsewhere.
-- This is a browser check only, and its findings never fail a build.
+- This is a browser check only.
 - Other automated tools check this only in part.
 
 **What it cannot catch.**

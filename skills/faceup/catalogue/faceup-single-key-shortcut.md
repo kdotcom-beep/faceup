@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -84,7 +83,7 @@ To keep single keys, add a setting to turn them off or change them, or limit eac
 
 **What checks it today.**
 - The Face Up skill flags code that listens for key presses across the whole page and acts on a single character without checking for Ctrl, Alt or Cmd. It then looks for a setting to turn those shortcuts off or change them.
-- The Face Up scanner and common automated checkers do not test for it, and no finding blocks a release.
+- The Face Up scanner and common automated checkers do not test for it.
 
 **What it cannot catch.**
 - Shortcuts added by an outside script or library.

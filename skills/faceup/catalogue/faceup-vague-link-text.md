@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: true
   wig: false
 detection:
-  automatic: false
   scanner: [code]
   rendered: false
   agent: false
@@ -65,7 +64,7 @@ These links meet 2.4.4 without relying on context, and they also meet the strict
 - The Face Up scanner compares every link's words with a list: "click here", "read more", "learn more", "here", "more" and "this link". It ignores capitals, extra spaces and arrows.
 - A link's `aria-label` counts as its words. A link named by `aria-labelledby` is skipped.
 - Link words that are only known when the page runs are listed as not assessed.
-- Findings are for review and never block a release, because the sentence around a link can explain it.
+- Findings are for review, because the sentence around a link can explain it.
 - It checks links only, as 2.4.4 does. Vague button words belong to `faceup-generic-button-copy`.
 
 **What it cannot catch.**

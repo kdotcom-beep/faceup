@@ -3,6 +3,8 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
+export const SEVERITY_LABELS = { failure: 'Accessibility failure', 'ux-failure': 'UX failure', smell: 'Smell' }
+
 // ---------- front matter split ----------
 export function splitFrontMatter(text) {
   const m = text.replace(/\r\n/g, '\n').match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)

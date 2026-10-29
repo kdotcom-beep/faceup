@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -118,7 +117,7 @@ One outer element holds both the word and the tooltip, so moving onto the toolti
 
 **What checks it today.**
 - The Face Up skill checks custom tooltips and pop-ups for a way to close them with Escape, and for open and close code that covers both the word and the tooltip.
-- The scanner does not check this rule, and findings never block a release.
+- The scanner does not check this rule.
 
 **What it cannot catch.**
 - Whether each of the three conditions holds on the running page, which a person checks. Failing any one of them fails the rule.

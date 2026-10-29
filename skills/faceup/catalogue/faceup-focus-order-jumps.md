@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: true
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -92,7 +91,6 @@ To change the visual order, change the order in the code, because styles that re
 - The Face Up skill finds positive tabIndex values, dialogs and menus placed away from the control that opens them, and close actions that never return focus.
 - The jsx-a11y linter, a code-checking tool, reports positive tabindex values but does not check the order focus takes.
 - The scanner does not check this rule. Its browser check runs axe, a testing tool that flags positive tabindex values, but reports those results separately from the Face Up catalogue.
-- Findings never block a release.
 
 **What it cannot catch.**
 - Whether the order matches the layout at each screen size.

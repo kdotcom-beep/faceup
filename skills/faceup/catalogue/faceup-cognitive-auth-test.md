@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -94,7 +93,7 @@ The first example lets the device offer the code straight from the message it ar
 **What checks it today.**
 - The Face Up skill reads the login flow across its screens for steps that depend on remembering, copying by hand or solving a puzzle, with no other way through and nothing to help.
 - A code box that blocks pasting is a strong hint.
-- A person confirms each finding, and findings never block a release.
+- A person confirms each finding.
 
 **What it cannot catch.**
 - Another way to log in that lies outside the code the skill read, which a person needs to check for.

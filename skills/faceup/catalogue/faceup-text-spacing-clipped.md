@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: true
@@ -103,7 +102,7 @@ If a preview must be short, cut off only a teaser that links to the full text. T
 - The Face Up skill looks for fixed-height text boxes that hide overflow, text cut to a set number of lines, and spacing locked with `!important` on the element itself.
 - Given a page address, the Face Up scanner applies the four spacing values at 1280 pixels wide and reports text boxes that cut off text only once they are applied.
 - It also reports spacing locked with `!important` on the element itself, found by axe, a widely used testing tool.
-- A person confirms each finding, and none blocks a release.
+- A person confirms each finding.
 
 **What it cannot catch.**
 - Text that overlaps other content instead of being cut off, and text lost at other screen widths.

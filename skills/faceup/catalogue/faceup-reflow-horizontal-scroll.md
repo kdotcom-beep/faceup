@@ -21,7 +21,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: false
@@ -91,7 +90,7 @@ Text sized partly by the window's width can stop growing before 200% zoom, even 
 - It skips images, video, embedded frames, canvases, image maps, tables, code blocks, carousels, boxes that scroll sideways, and anything inside them.
 - It also lists navigation links that show at 1280 pixels wide but are hidden at 320, when the page has no menu button. A person checks whether those places can still be reached.
 - On 14 well-known sites tested in October 2026, all 3 findings were real.
-- Findings are for a person to review and never block a release.
+- Findings are for a person to review.
 - The Face Up skill reads the code for fixed pixel widths and text sized by the window.
 
 **What it cannot catch.**

@@ -16,7 +16,6 @@ detectable_by:
   jsx_a11y: true
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -102,7 +101,6 @@ When a dialog opens, move focus to its first control, as the W3C recommends, or 
 - The Face Up skill finds every place the code focuses a field automatically.
 - A person reviews each one, because the code cannot show where the field sits.
 - A common code-checking tool reports every case and cannot tell good uses from harmful ones either.
-- Findings never block a release.
 
 **What it cannot catch.**
 - Whether the page scrolls, and how far. That depends on the layout.

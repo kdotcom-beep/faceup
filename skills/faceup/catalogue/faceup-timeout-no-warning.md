@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -107,7 +106,6 @@ Saving answers as the person goes limits the damage. At Level AAA, success crite
 **What checks it today.**
 - The Face Up skill finds timers that sign out, clear the form or change page, then looks for a warning and a way to extend or turn off the limit.
 - Neither the scanner nor common automated checkers test this.
-- Findings never block a release.
 
 **What it cannot catch.**
 - Whether a limit is essential or part of a real-time event.

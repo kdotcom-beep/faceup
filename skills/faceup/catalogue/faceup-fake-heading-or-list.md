@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -65,7 +64,7 @@ Choose the heading level to match where the section sits in the page. If you hid
 **What checks it today.**
 - The Face Up skill looks for bold or large text in a plain element (`div`, `span` or `p`) that opens a section with no heading element.
 - It looks for lines starting with a bullet, dash or typed number outside a real list (`ul`, `ol` or `li`).
-- A person confirms each finding, and findings never block a release.
+- A person confirms each finding.
 - The scanner does not check this rule.
 
 **What it cannot catch.**

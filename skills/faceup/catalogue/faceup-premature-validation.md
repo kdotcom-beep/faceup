@@ -16,7 +16,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -73,7 +72,6 @@ WCAG 2.2 success criterion 3.3.1, Error Identification, covers how a real error 
 
 **What checks it today.**
 - The Face Up skill reads the code for fields that are checked on every keystroke and show an error without waiting for the person to leave the field or submit the form.
-- No finding blocks a release.
 
 **What it cannot catch.**
 - Whether the error really appears at the first character, which shows only when the page runs.

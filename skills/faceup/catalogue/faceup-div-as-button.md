@@ -21,7 +21,6 @@ detectable_by:
   jsx_a11y: true
   wig: true
 detection:
-  automatic: true
   scanner: [code]
   rendered: false
   agent: false
@@ -65,7 +64,6 @@ You can add a button role, a Tab stop and key handling to a plain box by hand, b
 - The Face Up scanner flags a plain element, such as a div, span or list item, that has a click handler (code that runs on a click), unless it also has a control role such as button, a Tab stop and a key handler.
 - It ignores a handler that only stops the click reaching the elements around it.
 - It marks an element as not assessed if it has passed-through settings (props), a backdrop class name such as overlay, or a real control inside it.
-- A finding can fail a build.
 - Code-checking tools such as eslint-plugin-jsx-a11y also catch this, but axe, the most widely used page-testing tool, cannot see click handlers.
 
 **What it cannot catch.**

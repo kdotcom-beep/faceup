@@ -1,6 +1,6 @@
 import { PLACEHOLDER_TITLES } from './checks/page-structure.mjs';
 
-const AXE_RULES = {
+export const AXE_RULES = {
   'html-has-lang': 'faceup-lang-missing',
   'html-lang-valid': 'faceup-lang-missing',
   'document-title': 'faceup-page-title-generic',
@@ -15,7 +15,7 @@ const AXE_RULES = {
   'avoid-inline-spacing': 'faceup-text-spacing-clipped',
 };
 
-const AXE_MESSAGES = {
+export const AXE_MESSAGES = {
   'avoid-inline-spacing': 'This element locks its text spacing with !important, so spacing settings chosen by the person reading cannot change it.',
   'label-content-name-mismatch': 'This control shows words that its accessible name leaves out, so saying those words to voice control does not reach it.',
   'html-has-lang': 'The page does not say what language it is in, so a screen reader may read it in the wrong voice.',
@@ -44,9 +44,9 @@ export const BROWSER_CHECKS = [
   { name: 'reduced-motion', rules: ['faceup-reduced-motion-ignored'] },
 ];
 
-const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
+export const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
-function installHelpers() {
+export function installHelpers() {
   const parse = (c) => {
     const m = c && c.match(/rgba?\(([^)]+)\)/);
     if (!m) return null;
@@ -186,6 +186,75 @@ async function findingsFromAxe(page, url, out) {
   }
   const result = await builder.analyze();
   out.axeVersion = result.testEngine?.version ?? out.axeVersion;
+  const mapped = axeFindings(result, url);
+  const mismatches = mapped.findings.filter((f) => f.rule === 'faceup-label-not-in-name');
+  if (mismatches.length) {
+    const shown = await page.evaluate(labelShownInName, mismatches.map((f) => f.selector));
+    const passed = new Set(mismatches.filter((_, i) => shown[i]));
+    mapped.findings = mapped.findings.filter((f) => !passed.has(f));
+  }
+  out.findings.push(...mapped.findings);
+  out.notAssessed.push(...mapped.notAssessed);
+  out.axeOther.push(...mapped.axeOther);
+  out.axeIncomplete.push(...mapped.axeIncomplete);
+}
+
+// Runs inside the page. axe's label-content-name-mismatch wants all the visible text as one unbroken run, so it
+// flags names that hold each visible piece in order with detail between, such as a score link named "Wed, 30 Sept,
+// Final score, IAW 364 & 257" that shows "Wed, 30 Sept" and "364 & 257". Saying a visible piece still reaches those.
+// Returns true for each element whose visible pieces, one per block of text, all appear unbroken and in order in its name,
+// or, on a card with several blocks, whose largest text appears unbroken in its name.
+export function labelShownInName(selectors) {
+  const clean = (text) => ` ${text.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()} `;
+  // Text hidden from screen readers with aria-hidden still counts, because it is what sighted voice users read.
+  const unseen = (node, root) => {
+    for (let n = node; n && n !== root.parentElement; n = n.parentElement) {
+      const s = getComputedStyle(n);
+      const r = n.getBoundingClientRect();
+      if (s.display === 'none' || s.visibility === 'hidden' || r.width <= 1 || r.height <= 1 || /rect\(0/.test(s.clip) || /inset\(50%\)/.test(s.clipPath)) return true;
+    }
+    return false;
+  };
+  return selectors.map((sel) => {
+    let el;
+    try {
+      el = document.querySelector(sel);
+    } catch {
+      return false;
+    }
+    if (!el) return false;
+    const labelledBy = el.getAttribute('aria-labelledby');
+    const name = clean(labelledBy ? labelledBy.split(/\s+/).map((id) => document.getElementById(id)?.textContent ?? '').join(' ') : el.getAttribute('aria-label') ?? '');
+    // Visible text that the element uses as its description is not part of its label.
+    const described = (el.getAttribute('aria-describedby') ?? '').split(/\s+/).map((id) => id && document.getElementById(id)).filter(Boolean);
+    const pieces = new Map();
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    for (let text = walker.nextNode(); text; text = walker.nextNode()) {
+      if (!text.textContent.trim() || unseen(text.parentElement, el) || described.some((d) => d.contains(text))) continue;
+      let block = text.parentElement;
+      while (block !== el && ['inline', 'contents'].includes(getComputedStyle(block).display)) block = block.parentElement;
+      const size = parseFloat(getComputedStyle(text.parentElement).fontSize);
+      const piece = pieces.get(block) ?? { text: '', size: 0 };
+      pieces.set(block, { text: `${piece.text} ${text.textContent}`, size: Math.max(piece.size, size) });
+    }
+    const shown = [...pieces.values()].map((piece) => ({ ...piece, text: clean(piece.text) })).filter((piece) => piece.text.trim());
+    if (!shown.length) return false;
+    let from = 0;
+    const inOrder = shown.every((piece) => {
+      const at = name.indexOf(piece.text, from);
+      from = at + piece.text.length - 1;
+      return at !== -1;
+    });
+    if (inOrder || shown.length === 1) return inOrder;
+    // On a card with several blocks of text, such as a brand, a title and "Shop now", the largest text is its label.
+    const largest = Math.max(...shown.map((piece) => piece.size));
+    return shown.some((piece) => piece.size === largest && name.includes(piece.text));
+  });
+}
+
+// Sorts an axe result into Face Up findings and results outside the catalogue.
+export function axeFindings(result, url) {
+  const out = { findings: [], notAssessed: [], axeOther: [], axeIncomplete: [] };
   for (const v of result.violations) {
     const rule = AXE_RULES[v.id];
     if (!rule) {
@@ -204,106 +273,119 @@ async function findingsFromAxe(page, url, out) {
     }
     for (const node of v.nodes) out.notAssessed.push({ rule, page: url, selector: node.target.join(' '), reason: `axe could not decide ${v.id} here and asks a person to check it.` });
   }
+  return out;
+}
+
+// Runs inside the page after installHelpers.
+export function domChecks(placeholderTitles) {
+  const { selector, shown, edge, pictureBehind, parse } = window.__faceup;
+  const ignored = (el) => Boolean(el.closest('[data-faceup-ignore]'));
+  const results = [];
+  const title = document.title.trim();
+  if (title && placeholderTitles.includes(title.toLowerCase())) {
+    results.push({ rule: 'faceup-page-title-generic', selector: 'title', message: `The page still uses the template title "${title}", so its browser tab does not say what the page is.` });
+  }
+
+  const REFS = ['aria-labelledby', 'aria-describedby', 'aria-controls', 'aria-owns', 'aria-errormessage', 'aria-activedescendant', 'aria-details', 'aria-flowto'];
+  const DESCRIBES = ['aria-describedby', 'aria-errormessage', 'aria-details'];
+  const isControl = (el) => el.hasAttribute('role') || el.matches('a[href], button, input, select, textarea, summary, [tabindex], [contenteditable]:not([contenteditable="false"])');
+  for (const el of document.querySelectorAll(REFS.map((a) => `[${a}]`).join(','))) {
+    if (ignored(el) || el.closest('[aria-hidden="true"]') || !el.getClientRects().length) continue;
+    for (const attr of REFS) {
+      const value = el.getAttribute(attr);
+      if (!value) continue;
+      const closed = el.getAttribute('aria-expanded') === 'false' || (el.getAttribute('role') === 'tab' && el.getAttribute('aria-selected') !== 'true');
+      if ((attr === 'aria-controls' || attr === 'aria-owns') && closed) continue;
+      // Screen readers only read a description out on a control, so a missing one elsewhere costs no one anything.
+      if (DESCRIBES.includes(attr) && !isControl(el)) continue;
+      // An error message is shown only once the field is invalid, so its target is often added then.
+      if (attr === 'aria-errormessage' && el.getAttribute('aria-invalid') !== 'true') continue;
+      const ids = value.trim().split(/\s+/);
+      const missing = ids.filter((id) => !document.getElementById(id));
+      // A label that still finds one of its targets still gives the element a name.
+      if (attr === 'aria-labelledby' && missing.length < ids.length) continue;
+      if (missing.length) results.push({ rule: 'faceup-aria-references-missing-id', selector: selector(el), message: `${attr} points at ${missing.map((id) => `"${id}"`).join(', ')}, which ${missing.length === 1 ? 'is' : 'are'} not on the page.` });
+    }
+  }
+
+  const TEXT_FIELD = 'input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button]):not([type=reset]):not([type=image]):not([type=range]):not([type=color]):not([type=file]), textarea';
+  const textOf = (ids) => ids.split(/\s+/).map((id) => document.getElementById(id)?.textContent ?? '').join(' ').trim();
+  for (const el of document.querySelectorAll(TEXT_FIELD)) {
+    if (ignored(el) || !shown(el) || !el.getAttribute('placeholder')?.trim()) continue;
+    const named = [...(el.labels ?? [])].some((l) => l.textContent.trim()) || el.getAttribute('aria-label')?.trim() || (el.getAttribute('aria-labelledby') && textOf(el.getAttribute('aria-labelledby'))) || el.getAttribute('title')?.trim();
+    if (!named) results.push({ rule: 'faceup-placeholder-as-label', selector: selector(el), message: `The only name this field has is its placeholder, "${el.getAttribute('placeholder').trim()}", which disappears as soon as someone types.` });
+  }
+
+  const PAUSE = /pause|stop|play/i;
+  const pauseButton = (v) => {
+    const vr = v.getBoundingClientRect();
+    let box = v.parentElement;
+    for (let i = 0; box && box !== document.body && i < 4; box = box.parentElement, i++) {
+      const near = [...box.querySelectorAll('button, [role="button"], a[href]')].some((b) => {
+        const br = b.getBoundingClientRect();
+        const name = [b.getAttribute('aria-label'), b.getAttribute('title'), b.textContent].join(' ');
+        return shown(b) && PAUSE.test(name) && br.right > vr.left - 48 && br.left < vr.right + 48 && br.bottom > vr.top - 48 && br.top < vr.bottom + 48;
+      });
+      if (near) return true;
+    }
+    return false;
+  };
+  for (const v of document.querySelectorAll('video')) {
+    if (ignored(v)) continue;
+    const short = Number.isFinite(v.duration) && !v.loop && v.duration <= (v.muted ? 5 : 3);
+    if (!v.paused && !v.controls && !short && (shown(v) || !v.muted) && !pauseButton(v)) results.push({ rule: 'faceup-autoplay-media-no-control', selector: selector(v), message: `This video plays by itself${v.muted ? ' (muted)' : ''} and has no player controls to pause it.` });
+  }
+
+  const borderOf = (el) => {
+    const cs = getComputedStyle(el);
+    return [cs.borderTopStyle, cs.borderTopWidth, cs.borderTopColor, cs.backgroundColor].join(' ');
+  };
+  const failedBorders = new Set();
+  for (const el of document.querySelectorAll(TEXT_FIELD)) {
+    if (ignored(el) || !shown(el) || el.closest('[aria-hidden="true"], [inert]')) continue;
+    const r = el.getBoundingClientRect();
+    if (r.right <= 0 || r.left >= innerWidth) continue;
+    if (r.width < 12 || r.height < 12 || parse(getComputedStyle(el).color)?.a === 0) continue;
+    const own = edge(el);
+    if (own === null || own >= 3) continue;
+    const covers = (c) => {
+      const cr = c.getBoundingClientRect();
+      return cr.left <= r.left + 2 && cr.right >= r.right - 2 && cr.top <= r.top + 2 && cr.bottom >= r.bottom - 2;
+    };
+    let best = own;
+    let unknown = false;
+    let hug = el.parentElement;
+    for (let w = el.parentElement, i = 0; w && w !== document.body && i < 4; w = w.parentElement, i++) {
+      const wr = w.getBoundingClientRect();
+      if (r.top - wr.top > 16 || wr.bottom - r.bottom > 16) break;
+      hug = w;
+      const outlines = [...w.children].filter((c) => !c.contains(el) && getComputedStyle(c).position === 'absolute' && covers(c));
+      for (const layer of [w, ...outlines]) {
+        const e = edge(layer);
+        if (e === null) unknown = true;
+        else best = Math.max(best, e);
+      }
+      if (best >= 3) break;
+    }
+    if (best >= 3) continue;
+    if (unknown || pictureBehind(el)) {
+      results.push({ notAssessed: true, rule: 'faceup-nontext-contrast', selector: selector(el), reason: 'A picture or gradient sits behind this field, so its edge contrast could not be measured.' });
+      continue;
+    }
+    const icon = [...(hug?.querySelectorAll('svg, img') ?? [])].some((i) => shown(i) && !i.contains(el));
+    const measured = best >= 1.05 ? `This field's edge has a contrast of ${best.toFixed(2)}:1 against the background, below the 3:1 needed to see where the field is.` : 'The check found no border, outline or fill that marks the edge of this field against the background around it.';
+    results.push({ rule: 'faceup-nontext-contrast', selector: selector(el), message: icon ? `${measured} An icon inside the field may be enough to show where it is, so check it by eye.` : measured });
+    failedBorders.add(borderOf(el));
+  }
+  for (const el of document.querySelectorAll('select')) {
+    if (ignored(el) || !shown(el) || el.closest('[aria-hidden="true"], [inert]') || !failedBorders.has(borderOf(el))) continue;
+    results.push({ notAssessed: true, rule: 'faceup-nontext-contrast', selector: selector(el), reason: 'This select menu has the same border as a field that failed this check. Select menus are not measured, because the browser often draws part of their edge, so check it by eye.' });
+  }
+  return results;
 }
 
 async function findingsFromDom(page, url, out) {
-  const found = await page.evaluate((placeholderTitles) => {
-    const { selector, shown, edge, pictureBehind, parse } = window.__faceup;
-    const ignored = (el) => Boolean(el.closest('[data-faceup-ignore]'));
-    const results = [];
-    const title = document.title.trim();
-    if (title && placeholderTitles.includes(title.toLowerCase())) {
-      results.push({ rule: 'faceup-page-title-generic', selector: 'title', message: `The page still uses the template title "${title}", so its browser tab does not say what the page is.` });
-    }
-
-    const REFS = ['aria-labelledby', 'aria-describedby', 'aria-controls', 'aria-owns', 'aria-errormessage', 'aria-activedescendant', 'aria-details', 'aria-flowto'];
-    for (const el of document.querySelectorAll(REFS.map((a) => `[${a}]`).join(','))) {
-      if (ignored(el) || el.closest('[aria-hidden="true"]') || !el.getClientRects().length) continue;
-      for (const attr of REFS) {
-        const value = el.getAttribute(attr);
-        if (!value) continue;
-        const closed = el.getAttribute('aria-expanded') === 'false' || (el.getAttribute('role') === 'tab' && el.getAttribute('aria-selected') !== 'true');
-        if ((attr === 'aria-controls' || attr === 'aria-owns') && closed) continue;
-        const missing = value.trim().split(/\s+/).filter((id) => !document.getElementById(id));
-        if (missing.length) results.push({ rule: 'faceup-aria-references-missing-id', selector: selector(el), message: `${attr} points at ${missing.map((id) => `"${id}"`).join(', ')}, which ${missing.length === 1 ? 'is' : 'are'} not on the page.` });
-      }
-    }
-
-    const TEXT_FIELD = 'input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button]):not([type=reset]):not([type=image]):not([type=range]):not([type=color]):not([type=file]), textarea';
-    const textOf = (ids) => ids.split(/\s+/).map((id) => document.getElementById(id)?.textContent ?? '').join(' ').trim();
-    for (const el of document.querySelectorAll(TEXT_FIELD)) {
-      if (ignored(el) || !shown(el) || !el.getAttribute('placeholder')?.trim()) continue;
-      const named = [...(el.labels ?? [])].some((l) => l.textContent.trim()) || el.getAttribute('aria-label')?.trim() || (el.getAttribute('aria-labelledby') && textOf(el.getAttribute('aria-labelledby'))) || el.getAttribute('title')?.trim();
-      if (!named) results.push({ rule: 'faceup-placeholder-as-label', selector: selector(el), message: `The only name this field has is its placeholder, "${el.getAttribute('placeholder').trim()}", which disappears as soon as someone types.` });
-    }
-
-    const PAUSE = /pause|stop|play/i;
-    const pauseButton = (v) => {
-      const vr = v.getBoundingClientRect();
-      let box = v.parentElement;
-      for (let i = 0; box && box !== document.body && i < 4; box = box.parentElement, i++) {
-        const near = [...box.querySelectorAll('button, [role="button"], a[href]')].some((b) => {
-          const br = b.getBoundingClientRect();
-          const name = [b.getAttribute('aria-label'), b.getAttribute('title'), b.textContent].join(' ');
-          return shown(b) && PAUSE.test(name) && br.right > vr.left - 48 && br.left < vr.right + 48 && br.bottom > vr.top - 48 && br.top < vr.bottom + 48;
-        });
-        if (near) return true;
-      }
-      return false;
-    };
-    for (const v of document.querySelectorAll('video')) {
-      if (ignored(v)) continue;
-      const short = Number.isFinite(v.duration) && !v.loop && v.duration <= (v.muted ? 5 : 3);
-      if (!v.paused && !v.controls && !short && (shown(v) || !v.muted) && !pauseButton(v)) results.push({ rule: 'faceup-autoplay-media-no-control', selector: selector(v), message: `This video plays by itself${v.muted ? ' (muted)' : ''} and has no player controls to pause it.` });
-    }
-
-    const borderOf = (el) => {
-      const cs = getComputedStyle(el);
-      return [cs.borderTopStyle, cs.borderTopWidth, cs.borderTopColor, cs.backgroundColor].join(' ');
-    };
-    const failedBorders = new Set();
-    for (const el of document.querySelectorAll(TEXT_FIELD)) {
-      if (ignored(el) || !shown(el) || el.closest('[aria-hidden="true"], [inert]')) continue;
-      const r = el.getBoundingClientRect();
-      if (r.right <= 0 || r.left >= innerWidth) continue;
-      if (r.width < 12 || r.height < 12 || parse(getComputedStyle(el).color)?.a === 0) continue;
-      const own = edge(el);
-      if (own === null || own >= 3) continue;
-      const covers = (c) => {
-        const cr = c.getBoundingClientRect();
-        return cr.left <= r.left + 2 && cr.right >= r.right - 2 && cr.top <= r.top + 2 && cr.bottom >= r.bottom - 2;
-      };
-      let best = own;
-      let unknown = false;
-      let hug = el.parentElement;
-      for (let w = el.parentElement, i = 0; w && w !== document.body && i < 4; w = w.parentElement, i++) {
-        const wr = w.getBoundingClientRect();
-        if (r.top - wr.top > 16 || wr.bottom - r.bottom > 16) break;
-        hug = w;
-        const outlines = [...w.children].filter((c) => !c.contains(el) && getComputedStyle(c).position === 'absolute' && covers(c));
-        for (const layer of [w, ...outlines]) {
-          const e = edge(layer);
-          if (e === null) unknown = true;
-          else best = Math.max(best, e);
-        }
-        if (best >= 3) break;
-      }
-      if (best >= 3) continue;
-      if (unknown || pictureBehind(el)) {
-        results.push({ notAssessed: true, rule: 'faceup-nontext-contrast', selector: selector(el), reason: 'A picture or gradient sits behind this field, so its edge contrast could not be measured.' });
-        continue;
-      }
-      const icon = [...(hug?.querySelectorAll('svg, img') ?? [])].some((i) => shown(i) && !i.contains(el));
-      const measured = best >= 1.05 ? `This field's edge has a contrast of ${best.toFixed(2)}:1 against the background, below the 3:1 needed to see where the field is.` : 'The check found no border, outline or fill that marks the edge of this field against the background around it.';
-      results.push({ rule: 'faceup-nontext-contrast', selector: selector(el), message: icon ? `${measured} An icon inside the field may be enough to show where it is, so check it by eye.` : measured });
-      failedBorders.add(borderOf(el));
-    }
-    for (const el of document.querySelectorAll('select')) {
-      if (ignored(el) || !shown(el) || el.closest('[aria-hidden="true"], [inert]') || !failedBorders.has(borderOf(el))) continue;
-      results.push({ notAssessed: true, rule: 'faceup-nontext-contrast', selector: selector(el), reason: 'This select menu has the same border as a field that failed this check. Select menus are not measured, because the browser often draws part of their edge, so check it by eye.' });
-    }
-    return results;
-  }, [...PLACEHOLDER_TITLES]);
+  const found = await page.evaluate(domChecks, [...PLACEHOLDER_TITLES]);
   for (const { notAssessed, ...f } of found) {
     if (notAssessed) out.notAssessed.push({ ...f, page: url });
     else out.findings.push({ ...f, page: url, source: 'faceup' });
@@ -849,10 +931,15 @@ async function checkPage(browser, url, out, titles, pageLimit, width) {
 
 const PLACES_LISTED = 10;
 
+// Findings of the same kind on one page, differing only in quoted text and numbers.
+export function repeatKey(f) {
+  return [f.rule, f.page, f.source, f.message.replace(/"[^"]*"/g, '""').replace(/\d+(\.\d+)?/g, '#')].join('|');
+}
+
 function groupRepeats(findings) {
   const groups = new Map();
   for (const f of findings) {
-    const key = [f.rule, f.page, f.source, f.message.replace(/"[^"]*"/g, '""').replace(/\d+(\.\d+)?/g, '#')].join('|');
+    const key = repeatKey(f);
     groups.set(key, [...(groups.get(key) ?? []), f]);
   }
   return [...groups.values()].map((group) => {

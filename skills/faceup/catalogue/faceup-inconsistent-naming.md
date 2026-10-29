@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -97,7 +96,6 @@ For actions on different things, keep the verb and add the object.
 **What checks it today.**
 - The Face Up skill compares controls across pages and groups those that run the same code, send data to the same place, or share an icon.
 - It flags groups whose names differ.
-- Findings never block a release.
 
 **What it cannot catch.**
 - Whether two controls really do the same thing, which a person decides. "Submit application" and "Save draft" may rightly differ.

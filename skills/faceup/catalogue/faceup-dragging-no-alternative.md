@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -128,7 +127,6 @@ After a move, keyboard focus stays on the button just pressed in the moved row, 
 **What checks it today.**
 - The Face Up skill finds drag-and-drop code and looks for a way to make the same change with a single click or tap.
 - The alternative may sit in a menu, a shortcut or elsewhere on the page, so the skill cannot prove it is missing.
-- Findings never block a release.
 
 **What it cannot catch.**
 - Whether the alternative works from start to finish, which a person needs to test manually.

@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: true
@@ -84,7 +83,6 @@ The skip link can stay hidden until a keyboard user reaches it, but it must then
 - The Face Up skill reads the shared layout for a skip link, main element and headings, and checks the skip link's target exists.
 - Given a page address, the Face Up scanner reports a skip link whose target is missing, or hidden at 1280 or 375 pixels wide, so following it goes nowhere.
 - axe, a widely used testing tool, has a `bypass` rule, but it leaves these pages for a person to review, and the scanner does not report those results.
-- No finding blocks a release.
 
 **What it cannot catch.**
 - Whether a page has a skip link at all, which the skill decides from the code.

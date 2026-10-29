@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -86,7 +85,6 @@ function ContactStep({ answers, setAnswers, goBack, goNext }) {
 
 **What checks it today.**
 - The Face Up skill reads the flow and reports any step whose answers live only inside it and are lost on the way back, including through the browser's Back button.
-- Findings never block a release.
 - When testing manually, try the browser's Back button as well as the form's own.
 
 **What it cannot catch.**

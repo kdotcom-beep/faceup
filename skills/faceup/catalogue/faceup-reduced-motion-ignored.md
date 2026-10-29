@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: [code, browser]
   rendered: true
   agent: false
@@ -92,7 +91,7 @@ The drifting layer moves on its own for more than five seconds, so it also needs
 - Its browser pass loads the page with the setting on and lists animations that still move something 32 pixels or larger by 8 pixels or more.
 - Off-screen and scroll-driven animation, fades, colour changes and loading spinners are not reported.
 - On 14 well-known sites tested in October 2026, both findings were real.
-- Findings are for review and never block a release.
+- Findings are for review.
 
 **What it cannot catch.**
 - Whether an existing reduce-motion block is complete, so a block that stops one animation and misses five others counts as covered.

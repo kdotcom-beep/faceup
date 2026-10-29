@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -83,7 +82,6 @@ Any of these meets 3.3.7: filling in the earlier answer, offering to reuse it, o
 - The Face Up skill matches questions across the steps of one process by field name and autofill setting.
 - It flags a repeated question that has no "same as" option, no filled-in value and no display of the earlier answer.
 - An automatic check across 20 public multi-step forms flagged 13 repeats, and none was a real failure. Twelve asked for someone else's details or spanned separate processes, which is why a person reviews every finding.
-- Findings never block a release.
 
 **What it cannot catch.**
 - A repeated question whose field has an unusual name and no autofill setting, because the skill matches questions by those.

@@ -17,7 +17,6 @@ detectable_by:
   jsx_a11y: true
   wig: false
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: false
@@ -83,7 +82,6 @@ A passage in another language needs its own code under WCAG 2.2 success criterio
 
 **What checks it today.**
 - Given a page address, the scanner's browser check uses axe, an automated testing tool, to report a missing, empty or invalid code. Other common checkers report this too.
-- Findings never fail a build.
 - The scanner's code check is switched off, because in testing it only flagged an unused leftover file.
 
 **What it cannot catch.**

@@ -21,7 +21,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -74,7 +73,7 @@ Name the control by its visible label, and add its look or position alongside if
 - The Face Up skill reads help text, onboarding steps, empty states and error messages for words that describe looks or position: "green", "red", "round", "square", "on the left", "on the right", "above" and "below".
 - When it finds one, it checks whether the same sentence also names the control by its label.
 - A person confirms each finding, because these words often appear in instructions that are fine.
-- The scanner does not check this rule, and no finding blocks a release.
+- The scanner does not check this rule.
 
 **What it cannot catch.**
 - Instructions inside images or video, or copy loaded from a content system when the page runs.

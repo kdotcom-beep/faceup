@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -97,7 +96,7 @@ The area stays on the page because some screen readers miss one that appears at 
 **What checks it today.**
 - The Face Up skill reads the code for messages shown after an error or change that sit outside any announcement area, and for custom pop-ups that skip a library's built-in announcement.
 - Standard toasts from popular libraries are not flagged.
-- A person confirms each finding, and no finding blocks a release.
+- A person confirms each finding.
 
 **What it cannot catch.**
 - Whether the message is actually read out when the page runs, since even a correctly built area can stay silent if it is added in a way screen readers miss.

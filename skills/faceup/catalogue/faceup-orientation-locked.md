@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -95,7 +94,7 @@ Remove any lock in a script or the app's settings file unless the content needs 
 **What checks it today.**
 - The Face Up skill finds styles that hide content or show a rotate message in one orientation, script locks, and a fixed orientation in the app's settings file.
 - It also finds layouts rotated to fake the other orientation.
-- A person confirms each finding, because orientation styles often only adjust the layout. Findings never block a release.
+- A person confirms each finding, because orientation styles often only adjust the layout.
 - The scanner does not check this rule, and the orientation check in axe, a widely used testing tool, is experimental and off by default.
 
 **What it cannot catch.**

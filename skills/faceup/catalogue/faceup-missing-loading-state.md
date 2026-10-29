@@ -16,7 +16,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: [code]
   rendered: false
   agent: true
@@ -105,7 +104,7 @@ The status area is on the page from the start because screen readers often ignor
 - The scanner and skill find data requests that never track loading.
 - The scanner checks React components that load data with `useQuery` or `useSWR`, or with `fetch`, axios, Supabase, ky or got called inside `useEffect`.
 - It treats loading as handled if the component uses a loading flag or state, a spinner, skeleton or progress component, or the word "Loading".
-- A person reviews the rest, and findings never block a release.
+- A person reviews the rest.
 
 **What it cannot catch.**
 - Requests made elsewhere, such as in a click handler.

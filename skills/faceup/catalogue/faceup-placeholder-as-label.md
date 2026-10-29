@@ -22,7 +22,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: true
@@ -69,7 +68,7 @@ Keeping labels visible at all times goes beyond what 3.3.2 asks for.
 **What checks it today.**
 - The Face Up scanner's browser pass flags visible text fields whose only name is the hint text, and the Face Up skill looks for the same pattern in the code.
 - On 14 well-known sites tested in October 2026, all 3 findings were real.
-- A person reviews each finding, and none blocks a release.
+- A person reviews each finding.
 
 **What it cannot catch.**
 - A visible label that is not linked to its field, which the check flags as if the label were missing.

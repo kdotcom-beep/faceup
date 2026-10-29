@@ -22,7 +22,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -99,7 +98,7 @@ The thicker border adds a cue that does not rely on colour, and the message says
 **What checks it today.**
 - The Face Up skill finds error and status states that change only a colour.
 - It finds links in paragraphs with the underline removed and no other cue.
-- A person confirms each finding, and findings never block a release.
+- A person confirms each finding.
 - The scanner does not check this rule. Its browser check runs axe, an automated testing tool, and lists any low-contrast links in text that axe flags outside the Face Up catalogue.
 
 **What it cannot catch.**

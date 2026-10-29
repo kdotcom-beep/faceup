@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -106,7 +105,6 @@ Focus starts on Cancel, so a stray press of Enter cancels the action. A working 
 **What checks it today.**
 - The Face Up skill follows each action that deletes, pays or submits and looks for a safeguard.
 - A safeguard may sit elsewhere in the process, so a person confirms each finding.
-- Findings never block a release.
 
 **What it cannot catch.**
 - Whether an undo works, a confirm step stops the action, or a payment can be reversed.

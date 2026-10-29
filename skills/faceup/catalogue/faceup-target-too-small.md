@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: false
@@ -97,7 +96,7 @@ If a target cannot grow, enough space around it also passes: a 24 pixel circle c
 - The scanner's browser check runs the target size rule from axe, a widely used testing tool, which measures each control as drawn on screen and tests its 24 pixel circle against its neighbours.
 - Targets axe cannot decide are listed as not assessed.
 - The Face Up skill can also spot a target set below 24 pixels in the code.
-- Findings are for review and never block a release.
+- Findings are for review.
 
 **What it cannot catch.**
 - The exceptions listed under "Test it yourself", which a person checks against each flagged target.

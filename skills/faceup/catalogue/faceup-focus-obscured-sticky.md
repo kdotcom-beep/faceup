@@ -22,7 +22,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: [code, browser]
   rendered: true
   agent: true
@@ -86,7 +85,7 @@ Keeping the full header height clear also meets the Level AAA version.
 - Given a page address, it also moves through the page with Tab and then Shift+Tab, at 1280 pixels wide and again at 375. It reports any focused control fully covered by a pinned bar, such as a header, cookie bar or promotion.
 - A bar counts as covering when it is solid or blurs what is behind it. Tinted overlays you can see through do not count, and controls under an embedded frame are left for a person.
 - On 33 well-known sites tested in October 2026, tabbing forwards at 1280 pixels, all 7 findings were real, mostly cookie bars and promotions.
-- Findings are for review and never fail a build.
+- Findings are for review.
 
 **What it cannot catch.**
 - Partly covered controls, links within the page, and window sizes other than 1280 and 375 pixels.

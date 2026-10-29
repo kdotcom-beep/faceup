@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: false

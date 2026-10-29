@@ -21,7 +21,6 @@ detectable_by:
   jsx_a11y: true
   wig: true
 detection:
-  automatic: true
   scanner: [code, browser]
   rendered: true
   agent: false
@@ -76,7 +75,6 @@ If a control also shows text, success criterion 2.5.3, Label in Name, Level A, r
 - The Face Up scanner reports buttons and links in the code that have no name.
 - Any of these counts as a name: text inside the control, aria-label, aria-labelledby, title, alt text on an image, an SVG title or a hidden-text component.
 - Button and Link components also pass when given a label or title setting. An icon on its own never counts.
-- A finding can fail a build.
 - Given a page address, it also runs axe, a widely used testing tool, on the live page and reports nameless controls for review.
 
 **What it cannot catch.**

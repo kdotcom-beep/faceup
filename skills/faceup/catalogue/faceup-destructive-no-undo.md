@@ -17,7 +17,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -141,7 +140,6 @@ The delete waits 10 seconds, and the timer pauses while the pointer or keyboard 
 **What checks it today.**
 - The Face Up skill checks each delete action for an undo, bin, archive or restore option.
 - A person checks each finding, because the code cannot prove there is no way back elsewhere.
-- Findings never block a release.
 
 **What it cannot catch.**
 - Whether undo really restores the item, or whether a bin works.

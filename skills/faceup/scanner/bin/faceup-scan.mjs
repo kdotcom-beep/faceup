@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { scan, gatingFindings } from '../src/scan.mjs';
+import { scan } from '../src/scan.mjs';
 import { renderScan, STEP_KINDS } from '../src/render.mjs';
 import { formatText, formatJson, formatSarif } from '../src/report.mjs';
 
@@ -19,14 +19,11 @@ Options:
   --steps <file>                             A JSON file of screens to reach by clicking after a page loads, such as
                                              views and dialogs in a single-page app. Each is checked as its own page.
   --format <text|json|sarif>                 Output format (default: text)
-  --fail-on <failure|ux-failure|smell|none>  Lowest severity that fails the build (default: failure).
-                                             Only the two naming checks can fail it; the rest are for review.
   --rules-url <url>                          Base URL of the published catalogue, used for rule links
   -h, --help                                 Show this help
 `;
 
 const FORMATS = { text: formatText, json: formatJson, sarif: formatSarif };
-const FAIL_ON = ['failure', 'ux-failure', 'smell', 'none'];
 
 function fail(message) {
   process.stderr.write(`faceup-scan: ${message}\n\n${USAGE}`);
@@ -42,7 +39,6 @@ try {
       viewport: { type: 'string', default: '1280' },
       steps: { type: 'string' },
       format: { type: 'string', default: 'text' },
-      'fail-on': { type: 'string', default: 'failure' },
       'rules-url': { type: 'string' },
       help: { type: 'boolean', short: 'h' },
     },
@@ -79,7 +75,6 @@ if (values.steps) {
   states = file.states;
   if (file.storageState) storageState = resolve(dirname(values.steps), file.storageState);
 }
-if (!FAIL_ON.includes(values['fail-on'])) fail(`unknown --fail-on value "${values['fail-on']}"`);
 
 let result;
 try {
@@ -96,6 +91,5 @@ try {
   process.exit(2);
 }
 
-const gating = gatingFindings(result, values['fail-on']);
-process.stdout.write(FORMATS[values.format](result, gating));
-process.exit(gating.length ? 1 : 0);
+process.stdout.write(FORMATS[values.format](result));
+process.exit(0);

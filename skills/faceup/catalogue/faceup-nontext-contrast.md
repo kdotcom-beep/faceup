@@ -21,7 +21,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: false
@@ -100,7 +99,7 @@ Show a switch's state with more than colour, such as a moving knob, a tick or a 
 - The Face Up scanner's browser pass measures the edges of text fields against the colour behind them, and a border, outline, fill, shadow or close-fitting wrapper that reaches 3:1 passes.
 - When an icon sits inside the field, a person checks by eye.
 - On 14 well-known sites tested in October 2026, 3 of 6 findings were real, and the wrong ones were select menus. The scanner now lists a select menu for a person to check only when it shares the border of a field that failed.
-- Findings are for review and never block a release.
+- Findings are for review.
 
 **What it cannot catch.**
 - Select menus on their own, icons, switches, checkbox states and focus outlines.

@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -64,7 +63,7 @@ Give each personal details field the matching `autocomplete` value, which tells 
 
 **What checks it today.**
 - The Face Up skill matches each field's type, name and placeholder against common personal details: name, email, address, postcode, phone and card.
-- A match with no `autocomplete` value goes to a person to confirm and never blocks a release.
+- A match with no `autocomplete` value goes to a person to confirm.
 - Only details about the person filling in the form are covered. A staff screen showing a customer's address looks the same in code, so the skill reads the surrounding page to judge whose details a field asks for.
 
 **What it cannot catch.**

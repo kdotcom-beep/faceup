@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -118,7 +117,7 @@ For a map, add zoom and pan buttons. In general, anything done with a gesture th
 
 **What checks it today.**
 - The Face Up skill reads components that track finger or mouse movement or multi-finger gestures, and checks that a single tap or click can do everything the gesture does.
-- A person confirms each finding. Findings never block a release.
+- A person confirms each finding.
 
 **What it cannot catch.**
 - Whether an alternative exists elsewhere on the page.

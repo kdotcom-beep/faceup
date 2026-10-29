@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -94,7 +93,6 @@ function MainNav({ currentPath }) {
 **What checks it today.**
 - The Face Up skill compares menus across pages and layouts in the code, and flags shared links that appear in a different order or code that re-sorts the list for each page.
 - Added or missing links are not reported.
-- No finding blocks a release.
 
 **What it cannot catch.**
 - Menus built from data when the page loads, such as from a content system or a personalised list, whose order only shows in the browser.

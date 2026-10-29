@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -104,7 +103,7 @@ Leaving motion off by default also meets the criterion.
 - The Face Up skill reads the code for anything that reacts to device motion or tilt, including libraries that wrap it.
 - For each one that triggers an action, it looks for a matching button and a setting to turn it off.
 - It ignores motion that only changes the display, such as parallax.
-- A person confirms each finding, and no finding blocks a release.
+- A person confirms each finding.
 
 **What it cannot catch.**
 - Whether motion is essential, as in a step counter or tilting game, which a person must judge.

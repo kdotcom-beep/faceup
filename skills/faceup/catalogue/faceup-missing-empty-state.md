@@ -17,7 +17,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: [code]
   rendered: false
   agent: true
@@ -88,7 +87,7 @@ A filtered list needs its own message, such as "No invoices match this filter", 
 - The Face Up scanner and skill look for components that load data and show a list, with nothing shown when the list is empty.
 - The scanner treats a component as loading data when it calls a React data hook such as useQuery or useSWR, or calls fetch, axios, supabase, ky or got inside useEffect, either directly or through one of the project's own hooks.
 - A list written directly into the code is not treated as data that can be empty.
-- Findings go to a person to review and never fail a build.
+- Findings go to a person to review.
 
 **What it cannot catch.**
 - A component that gets its list from a parent component, as in the example above.

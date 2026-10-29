@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -85,7 +84,6 @@ Acting on change is allowed if a text warning comes before the control, but a Go
 **What checks it today.**
 - The Face Up skill reads the code for dropdowns, radio buttons and checkboxes that change page or send the form when changed.
 - A person confirms each finding, because the code may act only in some cases, or a warning may sit elsewhere on the page.
-- Findings never block a release.
 
 **What it cannot catch.**
 - Whether a real warning came first, and whether the person would expect the change.

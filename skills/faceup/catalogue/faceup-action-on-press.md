@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -85,7 +84,7 @@ Drag and drop can start on press, because the move happens on release, and dropp
 **What checks it today.**
 - The Face Up skill finds press handlers (`onMouseDown`, `onPointerDown`, `onTouchStart`) that delete, submit, navigate or change saved data.
 - It ignores handlers that only start a drag, keep focus, or show something that release hides.
-- A person confirms each finding, and findings never block a release.
+- A person confirms each finding.
 
 **What it cannot catch.**
 - Whether acting on press is essential, as in a piano or game.

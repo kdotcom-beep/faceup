@@ -16,7 +16,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -76,7 +75,7 @@ Name what happens when the person presses the button, in their own terms.
 **What checks it today.**
 - The Face Up skill flags buttons whose whole text is "Continue", "Submit", "OK", "Next", "Done" or "Go".
 - Vercel's web interface guidelines make the same point, using "Save API Key" as the example of a label that replaces "Continue".
-- The flag is advice only, and findings never block a release.
+- The flag is advice only.
 
 **What it cannot catch.**
 - Whether the general word is actually right, as "Next" is in a form split into steps.

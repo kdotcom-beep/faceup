@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -86,7 +85,6 @@ function PageLayout({ children }) {
 **What checks it today.**
 - The Face Up skill compares pages that offer help and flags any page where help moves relative to the repeated header, navigation and footer.
 - A page with no help is noted as a usability issue and never counted as a 3.2.6 failure.
-- Findings never block a release.
 
 **What it cannot catch.**
 - Whether two help links offer the same kind of help, which a person must judge.

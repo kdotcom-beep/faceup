@@ -22,7 +22,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: [code, browser]
   rendered: true
   agent: false
@@ -82,7 +81,7 @@ To meet success criterion 2.4.13, Focus Appearance, Level AAA, make the outline 
 - In a browser, it tabs through the page and reports controls that look exactly the same with and without focus.
 - Text fields that may show focus only through the blinking text cursor are left for a person to check.
 - On 33 well-known sites tested in October 2026, 6 of its 7 findings were real problems.
-- Findings go to a person to confirm and never fail a build.
+- Findings go to a person to confirm.
 
 **What it cannot catch.**
 - Whether a replacement outline is strong enough to see.

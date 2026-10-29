@@ -22,7 +22,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: false
@@ -67,7 +66,7 @@ Mute any video that starts on load and give it controls. If the sound matters, l
 - axe, a widely used testing tool, reports audio longer than three seconds with no control.
 - Face Up also reports any playing video without controls or a nearby pause button, muted or not, because muting matters only for 1.4.2.
 - On 33 well-known sites tested in October 2026, both findings were real.
-- This is a browser check only, and its findings never fail a build.
+- This is a browser check only.
 - Some other tools check only the sound.
 
 **What it cannot catch.**

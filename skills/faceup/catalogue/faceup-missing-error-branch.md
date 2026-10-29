@@ -16,7 +16,6 @@ detectable_by:
   jsx_a11y: false
   wig: true
 detection:
-  automatic: false
   scanner: [code]
   rendered: false
   agent: true
@@ -123,7 +122,7 @@ The `r.ok` check catches error replies, which the browser otherwise treats as su
 - Reading the error, passing onError, setting an error state or catching the error counts as handled. A catch that only logs to the console does not.
 - Suspense query hooks are left to an error boundary, a wrapper that catches failures.
 - Data from a hook the project wrote itself, where the error is not read, is marked not assessed.
-- Findings are for review and never fail a build.
+- Findings are for review.
 - In September 2026, an early version flagged 122 of 153 data-loading parts of one public Lovable-built app, and 39 of 94 in another, though two apps is a small sample.
 
 **What it cannot catch.**

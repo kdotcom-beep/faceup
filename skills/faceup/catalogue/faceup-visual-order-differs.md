@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -95,7 +94,7 @@ Use CSS reordering only where order does not change meaning, and if another scre
 **What checks it today.**
 - The Face Up skill finds styles that reorder content on screen, then flags any reordering where order carries meaning, such as steps, messages, or a label and its value.
 - The scanner does not check this rule.
-- A person confirms each finding. Findings never block a release.
+- A person confirms each finding.
 
 **What it cannot catch.**
 - Whether a different order changes the meaning.

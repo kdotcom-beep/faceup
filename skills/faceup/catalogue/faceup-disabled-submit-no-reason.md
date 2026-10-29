@@ -17,7 +17,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -97,7 +96,6 @@ If the button must stay disabled, show what is missing next to each field.
 
 **What checks it today.**
 - The Face Up skill looks for a submit button that stays disabled until the form is valid, then checks for text naming what is missing.
-- Findings never block a release.
 
 **What it cannot catch.**
 - Help text placed elsewhere on the page, which the skill cannot always find.

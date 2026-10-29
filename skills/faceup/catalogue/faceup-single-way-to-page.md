@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -135,7 +134,7 @@ Build the site map from the same page list as the menu, so new pages appear in b
 **What checks it today.**
 - The Face Up skill checks the list of pages and the shared layouts for search, a site map, a table of contents or related links.
 - It lists pages reachable only through the menu, skipping process steps.
-- A person confirms each finding. Findings never block a release.
+- A person confirms each finding.
 
 **What it cannot catch.**
 - Pages and links loaded from a content system while the site runs.

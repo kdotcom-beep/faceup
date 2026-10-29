@@ -18,7 +18,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: []
   rendered: false
   agent: true
@@ -76,7 +75,7 @@ Elements inside a marked element inherit its code, which is why the footer sets 
 
 **What checks it today.**
 - The Face Up skill reads components and content for text in another language with no `lang`.
-- A person confirms each finding, and no finding blocks a release.
+- A person confirms each finding.
 - The scanner does not check this rule. When axe, a widely used testing tool, finds an invalid code such as `lang="french"`, the scanner reports it outside the Face Up catalogue.
 - axe cannot detect a missing code, which is what this rule covers.
 

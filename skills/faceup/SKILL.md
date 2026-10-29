@@ -56,7 +56,7 @@ It reads React components (`.js`, `.jsx`, `.ts`, `.tsx`) and the HTML and CSS fi
 - Stop any server you started when the review is done.
 
 **Reading the output.**
-- **Exit code:** 0 means nothing fails the build, 1 means a finding fails the build (a normal result, not a crash), and 2 means the command itself failed.
+- **Exit code:** 0 means the scan ran, whatever it found, and 2 means the command itself failed. Every finding is for a person to review.
 - **`filesScanned`:** how many files the code scan read. When it is 0, the code scan read nothing, so its silence means nothing.
 - **`parseErrors` and `skipped`:** files that could not be read or looked generated. Name them in the opening paragraph.
 - **`findings`:** each finding is evidence for its rule. A code finding gives a file, line and column. A browser finding gives the page address in `file` and `page`, line 0, and a CSS selector. `source` says whether axe or Face Up found it.

@@ -19,7 +19,6 @@ detectable_by:
   jsx_a11y: false
   wig: false
 detection:
-  automatic: false
   scanner: [browser]
   rendered: true
   agent: true
@@ -82,7 +81,7 @@ A modal dialog, a pop-up that blocks the page behind it, may keep Tab inside whi
 - If it runs out of time, it marks the rest of the page as not assessed.
 - On 33 well-known sites in October 2026, the scanner reported no traps and manual testing found none either. So far it has caught traps only on test pages.
 - The Face Up skill reads the code for key handlers that catch Tab with no way out, and for controls with no Escape to close them.
-- Findings are for review and never fail a build.
+- Findings are for review.
 - Common automated checkers miss traps, because a trap only shows when someone uses the page.
 
 **What it cannot catch.**
